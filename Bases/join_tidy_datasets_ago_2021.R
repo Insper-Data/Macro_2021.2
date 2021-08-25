@@ -1,5 +1,5 @@
 
-# JANUARY 2021 DATASET VERSION - Victor's Edits 
+# AUGUST 2021 DATASET VERSION - Victor's Edits 
 
 # Script to join all datasets used in our paper
 
@@ -428,7 +428,7 @@ dataset_total <- dataset_total %>%
 
 # Adding default and crises
 
-# Joining BCOM with dataset_total
+# Joining default with dataset_total
 dataset_total <- dataset_total %>% 
   left_join(default, by = c("year","country"))
 
