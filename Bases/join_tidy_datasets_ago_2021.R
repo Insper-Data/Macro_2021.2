@@ -37,6 +37,7 @@ interest_rates <- readxl::read_xlsx("Interest_Rate_Nom.xlsx")
 GBI_raw <- readxl::read_xlsx("GBI.xlsx")
 DXY <- read.csv("DXY.csv")
 bcom <- read_xlsx("bcom.xlsx")
+default <- read_xlsx("defaults.xlsx")
 
 #--------------------------------------------------------------------------------------------
       # TIDYING & JOINING USED DATASETS
@@ -208,6 +209,7 @@ bcom <- bcom %>%
 # Joining BCOM with dataset_total
 dataset_total <- dataset_total %>% 
   left_join(bcom, by = c("year"))
+
 
 #--------------------------------------------------------------------------------------------
 
@@ -421,6 +423,14 @@ EMAM_id <- EMAM_id %>%
 # Joining EM and AM id variable with dataset_total
 dataset_total <- dataset_total %>% 
   left_join(EMAM_id, by = c("year", "country"))
+
+#--------------------------------------------------------------------------------------------
+
+# Adding default and crises
+
+# Joining BCOM with dataset_total
+dataset_total <- dataset_total %>% 
+  left_join(default, by = c("year","country"))
 
 #--------------------------------------------------------------------------------------------
 
