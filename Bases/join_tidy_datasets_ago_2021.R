@@ -21,6 +21,7 @@ library(transformr)
 library(stringi)
 library(skimr)
 library(readxl)
+library(dummies)
 
 # Calling datasets
 debt_prop_Q <- read.csv("tsuda_tidy.csv")  # already tidy  
@@ -384,14 +385,50 @@ dataset_total <- dataset_total %>%
          post_13 = ifelse(year >= 2013, "YES", "NO"),
          post_15 = ifelse(year >= 2015, "YES", "NO"),
          post_16 = ifelse(year >= 2016, "YES", "NO"),
-         post_17 = ifelse(year >= 2017, "YES", "NO")) %>% 
+         post_17 = ifelse(year >= 2017, "YES", "NO"),
+         year_04 = ifelse(year == 2004, "YES", "NO"),
+         year_05 = ifelse(year == 2005, "YES", "NO"),
+         year_06 = ifelse(year == 2006, "YES", "NO"),
+         year_07 = ifelse(year == 2007, "YES", "NO"),
+         year_08 = ifelse(year == 2008, 1, 0),
+         year_09 = ifelse(year == 2009, 1, 0),
+         year_10 = ifelse(year == 2010, 1, 0),
+         year_11 = ifelse(year == 2011, 1, 0),
+         year_12 = ifelse(year == 2012, 1, 0),
+         year_13 = ifelse(year == 2013, 1, 0),
+         year_14 = ifelse(year == 2014, 1, 0),
+         year_15 = ifelse(year == 2015, 1, 0),
+         year_16 = ifelse(year == 2016, 1, 0),
+         year_17 = ifelse(year == 2017, 1, 0),
+         year_18 = ifelse(year == 2018, 1, 0),
+         year_19 = ifelse(year == 2019, 1, 0)) %>% 
   mutate(post_08 = as.factor(post_08),
          post_09 = as.factor(post_09),
          post_12 = as.factor(post_12),
          post_13 = as.factor(post_13),
          post_15 = as.factor(post_15),
          post_16 = as.factor(post_16),
-         post_17 = as.factor(post_17))
+         post_17 = as.factor(post_17),
+         year_04 = as.factor(year_04),
+         year_05 = as.factor(year_05),
+         year_06 = as.factor(year_06),
+         year_07 = as.factor(year_07),
+         year_08 = as.factor(year_08),
+         year_09 = as.factor(year_09),
+         year_10 = as.factor(year_10),
+         year_11 = as.factor(year_11),
+         year_12 = as.factor(year_12),
+         year_13 = as.factor(year_13),
+         year_14 = as.factor(year_14),
+         year_15 = as.factor(year_15),
+         year_16 = as.factor(year_16),
+         year_17 = as.factor(year_17),
+         year_18 = as.factor(year_18),
+         year_19 = as.factor(year_19))
+
+# Adding country dummies
+
+dataset_total <- cbind(dataset_total, dummy(dataset_total$country, sep = "_"))
 
 #--------------------------------------------------------------------------------------------
 
