@@ -1,0 +1,51 @@
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Thu, Aug 19, 2021 - 19:43:00
+\begin{table}[!htbp] \centering 
+  \caption{Advanced Markets} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & \multicolumn{4}{c}{Foreign Participation in Sovereign Debt (% GDP)} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+\hline \\[-1.8ex] 
+ Debt-to-GDP (t-1) & 0.029 & 0.136$^{***}$ & 0.173$^{***}$ & 0.134$^{***}$ \\ 
+  & (0.044) & (0.026) & (0.048) & (0.025) \\ 
+  & & & & \\ 
+ ln(GDP per capita) (t-1) & 9.454$^{**}$ & $-$2.200 & 29.216$^{***}$ & $-$3.435$^{*}$ \\ 
+  & (3.742) & (2.171) & (6.062) & (2.080) \\ 
+  & & & & \\ 
+ Nominal Interest (t-1) & 0.773$^{*}$ & $-$2.224$^{***}$ & $-$0.814$^{*}$ & $-$1.140$^{*}$ \\ 
+  & (0.408) & (0.776) & (0.430) & (0.666) \\ 
+  & & & & \\ 
+ Inflation (t-1) & $-$0.160 & 2.267$^{**}$ & 0.772 & 1.310$^{*}$ \\ 
+  & (0.565) & (0.935) & (0.682) & (0.786) \\ 
+  & & & & \\ 
+ Current Account Balance (t-1) & $-$0.419$^{**}$ & $-$0.564$^{***}$ & $-$0.489$^{**}$ & $-$0.551$^{***}$ \\ 
+  & (0.201) & (0.156) & (0.193) & (0.155) \\ 
+  & & & & \\ 
+ FX Volatility (t-1) & 0.014 & $-$0.176$^{***}$ & 0.024 & $-$0.177$^{***}$ \\ 
+  & (0.016) & (0.036) & (0.024) & (0.038) \\ 
+  & & & & \\ 
+ US Nominal Rate (t-1) & $-$0.586$^{*}$ &  &  & 0.029 \\ 
+  & (0.337) &  &  & (0.512) \\ 
+  & & & & \\ 
+ VIX EUA & $-$0.044 &  &  & 0.242$^{**}$ \\ 
+  & (0.078) &  &  & (0.121) \\ 
+  & & & & \\ 
+ Constant &  &  &  & 40.534$^{*}$ \\ 
+  &  &  &  & (22.545) \\ 
+  & & & & \\ 
+Country FE & Yes & No & Yes & No \\ 
+Year FE & No & Yes & Yes & No \\ 
+\textit{N} & 330 & 330 & 330 & 330 \\ 
+R$^{2}$ & 0.070 & 0.331 & 0.119 & 0.308 \\ 
+Adjusted R$^{2}$ & $-$0.020 & 0.288 & $-$0.007 & 0.291 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Notes:} & \multicolumn{4}{r}{$^{***}$Significant at the 1 percent level.} \\ 
+ & \multicolumn{4}{r}{$^{**}$Significant at the 5 percent level.} \\ 
+ & \multicolumn{4}{r}{$^{*}$Significant at the 10 percent level.} \\ 
+\end{tabular} 
+\end{table} 
