@@ -1,4 +1,4 @@
-setwd("~/Insper/Data/Projeto Macro/")
+setwd("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2")
 
 rm(list=ls())
 
@@ -11,7 +11,7 @@ library(dplyr)
 
 # Extraindo e arrumando os dados
 
-data <- read_excel("ESG_database.xlsx")
+data <- read_excel("Bases/ESG_database.xlsx")
 data <- data[,-c(2)]
 
 panel_data <- pdata.frame(data, index = c("Country.Name", "Time"))
