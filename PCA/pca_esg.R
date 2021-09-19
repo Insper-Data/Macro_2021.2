@@ -17,6 +17,7 @@ data <- data[,-c(2)]
 panel_data <- pdata.frame(data, index = c("Country.Name", "Time"))
 panel_data <- panel_data[,-c(1,2)]
 
+
 # PCA
 
 ## Ajustando escala dos dados
@@ -28,9 +29,9 @@ pca <- prcomp(panel_data)
 
 ## Scree plot
 
-fviz_eig(pca, addlabels = TRUE) +  # scree plot
-  xlab("Componente Principal") +
-  ylab("Proporção Explicada da Variância")
+scree_plot <- fviz_eig(pca, addlabels = TRUE) +  # scree plot
+                xlab("Componente Principal") +
+                ylab("Proporção Explicada da Variância")
 
 ## Cargas
 
@@ -179,9 +180,38 @@ for (j in 1:linhas) {
 
 # Inserindo de volta no dataframe
 
-ESG <- panel_data
+E_S_G <- panel_data
 
-ESG <- cbind(ESG, Governance = gov)
-ESG <- cbind(ESG, Social = soc)
-ESG <- cbind(ESG, Environmental = env)
+E_S_G <- cbind(E_S_G, Governance = -gov) # Invertendo o sinal
+E_S_G <- cbind(E_S_G, Social = soc)
+E_S_G <- cbind(E_S_G, Environmental = env)
 
+# Criando ESG
+
+## Pesos
+
+variance <- c(scree_plot[["data"]][[1,2]],
+              scree_plot[["data"]][[2,2]],
+              scree_plot[["data"]][[3,2]])
+
+total <- sum(variance)
+
+proportion <- c(scree_plot[["data"]][[1,2]]/total,
+                scree_plot[["data"]][[2,2]]/total,
+                scree_plot[["data"]][[3,2]]/total)
+
+variance_exp <- data.frame(proportion)
+
+## Média ponderada
+
+ESGI <- vector()
+
+for (i in 1:linhas) {
+  ESGI[i] <- E_S_G[i,16] * variance_exp[1,1] +
+            E_S_G[i,17] * variance_exp[2,1] +
+            E_S_G[i,18] * variance_exp[3,1]
+}
+
+
+ESG <- E_S_G
+ESG <- cbind(ESG, ESGI = ESGI)
