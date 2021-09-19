@@ -33,6 +33,10 @@ scree_plot <- fviz_eig(pca, addlabels = TRUE) +  # scree plot
                 xlab("Componente Principal") +
                 ylab("Proporção Explicada da Variância")
 
+### Quantas PCs pegar
+
+kaiser_criteria <- get_eigenvalue(pca) # Apenas se eigenvalue > 1
+
 ## Cargas
 
 Phi <- pca$rotation
@@ -215,3 +219,5 @@ for (i in 1:linhas) {
 
 ESG <- E_S_G
 ESG <- cbind(ESG, ESGI = ESGI)
+
+View(ESG)
