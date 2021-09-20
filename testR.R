@@ -3,17 +3,17 @@ rm(list=ls())
 library(tidyverse)
 
 setwd("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2")
-data <- read.csv("test.csv")
+data <- read.csv("test4.csv")
 
 teste <- data %>% 
   rename(Development = develop) %>% 
   group_by(Development, Time) %>% 
-  summarise(ESG = mean(-Access.to.electricity....of.population.)) %>% 
+  summarise(ESG = mean(ESG_Index)) %>% 
   ggplot(aes(x = Time, y = ESG, color=Development )) +
   scale_color_manual(values = c("EM" = "red4", "AV" = "navyblue"))+
   geom_point() +
   geom_line()+
-  labs(x = "Year", y = "ESG", title = "", subtitle = "") +
+  labs(x = "Year", y = "Index", title = "", subtitle = "") +
   theme_bw()
 
 teste

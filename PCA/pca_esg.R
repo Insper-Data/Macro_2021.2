@@ -186,7 +186,7 @@ for (j in 1:linhas) {
 
 E_S_G <- panel_data
 
-E_S_G <- cbind(E_S_G, Governance = -gov) # Invertendo o sinal
+E_S_G <- cbind(E_S_G, Governance = gov) # Invertendo o sinal
 E_S_G <- cbind(E_S_G, Social = soc)
 E_S_G <- cbind(E_S_G, Environmental = env)
 
@@ -211,9 +211,9 @@ variance_exp <- data.frame(proportion)
 ESGI <- vector()
 
 for (i in 1:linhas) {
-  ESGI[i] <- E_S_G[i,16] * variance_exp[1,1] +
-            E_S_G[i,17] * variance_exp[2,1] +
-            E_S_G[i,18] * variance_exp[3,1]
+  ESGI[i] <- E_S_G[i, "Governance"] * variance_exp[1,1] +
+            E_S_G[i, "Social"] * variance_exp[2,1] +
+            E_S_G[i, "Environmental"] * variance_exp[3,1]
 }
 
 
@@ -221,3 +221,4 @@ ESG <- E_S_G
 ESG <- cbind(ESG, ESGI = ESGI)
 
 View(ESG)
+
