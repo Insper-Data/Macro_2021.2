@@ -8,7 +8,7 @@ data <- read.csv("test4.csv")
 teste <- data %>% 
   rename(Development = develop) %>% 
   group_by(Development, Time) %>% 
-  summarise(ESG = mean(ESG_Index)) %>% 
+  summarise(ESG = -mean(Rule.of.Law..Estimate)) %>% 
   ggplot(aes(x = Time, y = ESG, color=Development )) +
   scale_color_manual(values = c("EM" = "red4", "AV" = "navyblue"))+
   geom_point() +

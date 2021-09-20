@@ -1,3 +1,13 @@
+
+# 1. Separar as variáveis que entram na definição do índice ESG.
+# 2. As demais variáveis viram controles no modelo de painel de efeitos fixos.
+# 3. Obter as três primeiras PCs.
+# 4. Olhar os scores das variáveis originais (sem controles) nas PCs.
+# 5. Para cada PC, ficar apenas com as variáveis com maior score positivo.
+# 6. Elevar ao quadro dos scores das variáveis que entraram e zerar os scores das demais.
+# 7. Isso define os subíndices G, S e E (checar ordem das componentes).
+# 8. Definir o índice final ESG ponderando G, S e E pelo percentual da variância explicada pela PC correspondente.
+
 setwd("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2")
 
 rm(list=ls())
@@ -36,6 +46,8 @@ scree_plot <- fviz_eig(pca, addlabels = TRUE) +  # scree plot
 ### Quantas PCs pegar
 
 kaiser_criteria <- get_eigenvalue(pca) # Apenas se eigenvalue > 1
+
+View(kaiser_criteria)
 
 ## Cargas
 
@@ -222,3 +234,4 @@ ESG <- cbind(ESG, ESGI = ESGI)
 
 View(ESG)
 
+View(data)
