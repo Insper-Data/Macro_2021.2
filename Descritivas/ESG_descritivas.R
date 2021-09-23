@@ -14,6 +14,19 @@ library(tidyr)
 
 data <- read.csv("Descritivas/ESG_scale.csv")
 
+# Spread ao longo dos anos
+
+spread <- data %>% 
+  rename(Development = develop) %>% 
+  group_by(Development, Time) %>% 
+  summarise(Spread = mean(Spread)) %>% 
+  ggplot(aes(x = Time, y = Spread, color=Development )) +
+  scale_color_manual(values = c("EM" = "red4", "AV" = "navyblue"))+
+  geom_point() +
+  geom_line()+
+  labs(x = "Year", y = "Spread (USA)", title = "", subtitle = "") +
+  theme_bw()
+
 # ESG ao longo do tempo
 
 ESG <- data %>% 
@@ -178,6 +191,8 @@ animate(graph4.animation, height = 500, width = 800, fps = 30, duration = 14,
         end_pause = 60, res = 100)
 
 anim_save("graph8.gif")
+
+
 
 
 
