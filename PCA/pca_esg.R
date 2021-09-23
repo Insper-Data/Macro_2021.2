@@ -39,15 +39,24 @@ pca <- prcomp(panel_data)
 
 ## Scree plot
 
-scree_plot <- fviz_eig(pca, addlabels = TRUE) +  # scree plot
+scree_plot <- fviz_eig(pca, addlabels = TRUE, barfill = "#0088C0", ggtheme = theme_classic()) +  # scree plot
                 xlab("Componente Principal") +
-                ylab("Proporção Explicada da Variância")
+                ylab("Proporção Explicada da Variância") 
 
 ### Quantas PCs pegar
 
 kaiser_criteria <- get_eigenvalue(pca) # Apenas se eigenvalue > 1
+kaiser_criteria["count"] <- c(1:14)
 
-View(kaiser_criteria)
+# View(kaiser_criteria)
+
+ggplot(data = kaiser_criteria, aes(x = count, y= eigenvalue)) +
+  geom_bar(stat = "identity", color = "#0088C0", fill = "#0088C0") +
+  theme_classic() +
+  xlab("Principal Component") +
+  ylab("Eigenvalue")+
+  geom_line(aes(y = 1, x = c(0:13)), color = "red", linetype = "dashed")
+
 
 ## Cargas
 
@@ -57,15 +66,15 @@ Phi <- pca$rotation
 
 ## Contribuições para as PCs
 
-pc1 <- pca %>% fviz_contrib(choice = "var", axes = 1, sort.val = "asc", fill = "steelblue", color = "black") + 
+pc1 <- pca %>% fviz_contrib(choice = "var", axes = 1, sort.val = "asc", fill = "#0088C0", color = "black", ggtheme = theme_classic()) + 
         labs(x = "", title = "Contribuiçõess das variáveis para a PC1") + 
         coord_flip()
 
-pc2 <- pca %>% fviz_contrib(choice = "var", axes = 2, sort.val = "asc", fill = "steelblue", color = "black") + 
+pc2 <- pca %>% fviz_contrib(choice = "var", axes = 2, sort.val = "asc", fill = "#0088C0", color = "black", ggtheme = theme_classic()) + 
         labs(x = "", title = "Contribuiçõess das variáveis para a PC2") + 
         coord_flip()
 
-pc3 <- pca %>% fviz_contrib(choice = "var", axes = 3, sort.val = "asc", fill = "steelblue", color = "black") + 
+pc3 <- pca %>% fviz_contrib(choice = "var", axes = 3, sort.val = "asc", fill = "#0088C0", color = "black", ggtheme = theme_classic()) + 
         labs(x = "", title = "Contribuiçõess das variáveis para a PC3") + 
         coord_flip()
 
@@ -234,4 +243,4 @@ ESG <- cbind(ESG, ESGI = ESGI)
 
 View(ESG)
 
-View(data)
+write.csv(-ESG, "ESG_scale.csv")
