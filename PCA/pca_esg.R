@@ -1,4 +1,3 @@
-
 # 1. Separar as variáveis que entram na definição do índice ESG.
 # 2. As demais variáveis viram controles no modelo de painel de efeitos fixos.
 # 3. Obter as três primeiras PCs.
@@ -240,7 +239,32 @@ for (i in 1:linhas) {
 
 ESG <- E_S_G
 ESG <- cbind(ESG, ESGI = ESGI)
+ESG <- -ESG
 
-View(ESG)
+# Ajustando as escalas dos índices
 
-write.csv(-ESG, "ESG_scale.csv")
+Gp <- vector()
+Ep <- vector()
+Sp <- vector()
+ESGIp <- vector()
+
+for (i in 1:linhas) {
+  
+  Gp[i] <- (ESG[i, "Governance"] - min(ESG[,"Governance"])) * 100 / (max(ESG[,"Governance"]) - min(ESG[,"Governance"]))
+  Ep[i] <- (ESG[i, "Environmental"] - min(ESG[,"Environmental"])) * 100 / (max(ESG[,"Environmental"]) - min(ESG[,"Environmental"]))
+  Sp[i] <- (ESG[i, "Social"] - min(ESG[,"Social"])) * 100 / (max(ESG[,"Social"]) - min(ESG[,"Social"]))
+  ESGIp[i] <- (ESG[i, "ESGI"] - min(ESG[,"ESGI"])) * 100 / (max(ESG[,"ESGI"]) - min(ESG[,"ESGI"]))
+    
+}
+
+ESG <- cbind(ESG, Gp = Gp, Ep = Ep, Sp = Sp, ESGIp = ESGIp)
+
+#View(ESG)
+
+ESG_indexes <- ESG[,c("Gp", "Ep", "Sp", "ESGIp")]
+
+# AVançados x EMergentes
+
+
+
+#write.csv(ESG_indexes, "ESG_indexes.csv")
