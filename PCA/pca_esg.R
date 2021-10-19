@@ -259,12 +259,6 @@ for (i in 1:linhas) {
 
 ESG <- cbind(ESG, Gp = Gp, Ep = Ep, Sp = Sp, ESGIp = ESGIp)
 
-#View(ESG)
-
 ESG_indexes <- ESG[,c("Gp", "Ep", "Sp", "ESGIp")]
 
-# AVançados x EMergentes
-
-
-
-#write.csv(ESG_indexes, "ESG_indexes.csv")
+#write.csv(ESG_indexes, "Bases/ESG_PCA_indexes.csv")
