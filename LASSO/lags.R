@@ -159,7 +159,7 @@ panel_dataset_mean_lags <- panel_dataset %>%
 
 # Exemplo
 
-lambda <- 0.1
+lambda <- 0.01
 
 # Lag 0
 
