@@ -11,6 +11,8 @@ library(plm)
 library(lmtest)
 library(glmnet)
 
+#---------------
+
 dataset_total_jan_2021 <- read.csv("Bases/merged.csv")
 
 panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
@@ -23,6 +25,8 @@ panel_dataset <- panel_dataset %>%
     # Adding foreign debt to GDP
     foreign_debt_to_gdp = foreign_debt / GDP_cur  
   )
+
+#---------------
 
 # Creating LAGS + MEAN
 
@@ -56,7 +60,6 @@ panel_dataset_lags <- panel_dataset %>%
     lag_vix_EUA_1 = dplyr::lag(vix_EUA, 1),
     lag_vix_EUR_1 = dplyr::lag(vix_EUR, 1))
 
-
 # Panel dataset - 2 lag added
 
 panel_dataset_lags_2 <- panel_dataset %>%
@@ -87,8 +90,6 @@ panel_dataset_lags_2 <- panel_dataset %>%
     lag_foreign_debt_to_gdp_2 = dplyr::lag(foreign_debt_to_gdp, 2),
     lag_vix_EUA_2 = dplyr::lag(vix_EUA, 2),
     lag_vix_EUR_2 = dplyr::lag(vix_EUR, 2))
-
-
 
 # Panel dataset - 3 lag added
 
@@ -121,8 +122,6 @@ panel_dataset_lags_3 <- panel_dataset %>%
     lag_vix_EUA_3 = dplyr::lag(vix_EUA, 3),
     lag_vix_EUR_3 = dplyr::lag(vix_EUR, 3))
 
-
-
 # Panel dataset mean lags added
 
 panel_dataset_mean_lags <- panel_dataset %>%
@@ -153,9 +152,12 @@ panel_dataset_mean_lags <- panel_dataset %>%
     lag_vix_EUA_mean = (dplyr::lag(vix_EUA, 1) + dplyr::lag(vix_EUA, 2) + dplyr::lag(vix_EUA, 3))/ 3,
     lag_vix_EUR_mean = (dplyr::lag(vix_EUR, 1) + dplyr::lag(vix_EUR, 2) + dplyr::lag(vix_EUR, 3))/ 3)
 
+#---------------
 # LASSO
 
 ## Excluding real_interest_rate and taxes: NA values
+
+# Exemplo
 
 lambda <- 0.1
 
@@ -168,18 +170,12 @@ lag_0 <- scale(lag_0)
 X <- subset(lag_0, select = -c(spreads))
 y <- lag_0[, c("spreads")]
 
-#---------------
-# Model
-#---------------
-
-# lasso
 la.eq <- glmnet(X, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
-#---------------
 # Results (lambda=0.1)
-#---------------
+
 df1.comp <- data.frame(
   Lasso   = la.eq$beta[,1]
 )
@@ -194,18 +190,12 @@ lag_1 <- scale(lag_1)
 X <- subset(lag_1, select = -c(spreads))
 y <- lag_1[, c("spreads")]
 
-#---------------
-# Model
-#---------------
-
-# lasso
 la.eq <- glmnet(X, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
-#---------------
 # Results (lambda=0.1)
-#---------------
+
 df1.comp <- data.frame(
   Lasso   = la.eq$beta[,1]
 )
@@ -220,18 +210,12 @@ lag_2 <- scale(lag_2)
 X <- subset(lag_2, select = -c(spreads))
 y <- lag_2[, c("spreads")]
 
-#---------------
-# Model
-#---------------
-
-# lasso
 la.eq <- glmnet(X, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
-#---------------
 # Results (lambda=0.1)
-#---------------
+
 df2.comp <- data.frame(
   Lasso   = la.eq$beta[,1]
 )
@@ -246,18 +230,12 @@ lag_3 <- scale(lag_3)
 X <- subset(lag_3, select = -c(spreads))
 y <- lag_3[, c("spreads")]
 
-#---------------
-# Model
-#---------------
-
-# lasso
 la.eq <- glmnet(X, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
-#---------------
 # Results (lambda=0.1)
-#---------------
+
 df3.comp <- data.frame(
   Lasso   = la.eq$beta[,1]
 )
@@ -272,28 +250,26 @@ mean <- scale(mean)
 X <- subset(mean, select = -c(spreads))
 y <- mean[, c("spreads")]
 
-#---------------
-# Model
-#---------------
-
-# lasso
 la.eq <- glmnet(X, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
-#---------------
 # Results (lambda=0.1)
-#---------------
+
 df_mean.comp <- data.frame(
   Lasso   = la.eq$beta[,1]
 )
 df_mean.comp
 
+#---------------
+
 # Checking by RMSE
 
-lambda.array <- seq(from = 0.01, to = 100, by = 0.01)
+lambda.array <- seq(from = 0.01, to = 10, by = 0.01)
 
-set.seed(40028922)
+set.seed(12345)
+
+# Lag 0
 
 size <- floor(0.8 * nrow(lag_0))
 
@@ -304,6 +280,37 @@ xtrain <- subset(train, select = -c(spreads))
 ytrain <- subset(train, select = c(spreads))
 
 test <- lag_0[-train_ind, ]
+xtest <- subset(test, select = -c(spreads))
+ytest <- subset(test, select = c(spreads))
+
+lassofit <- glmnet(xtrain, ytrain, alpha = 1, lambda = lambda.array)
+
+plot(lassofit, xvar = "lambda", label = T)
+
+## Goodness of fit
+
+plot(lassofit, xvar = "dev", label = T)
+## Quanto da variância explicada
+
+## Predicted values
+y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
+
+# MSE
+MSE_lasso_0 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
+
+# Lag 1
+
+set.seed(12345)
+
+size <- floor(0.8 * nrow(lag_1))
+
+train_ind <- sample(seq_len(nrow(lag_1)), size = size)
+
+train <- lag_1[train_ind, ]
+xtrain <- subset(train, select = -c(spreads))
+ytrain <- subset(train, select = c(spreads))
+
+test <- lag_1[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
 ytest <- subset(test, select = c(spreads))
 
@@ -320,34 +327,22 @@ plot(lassofit, xvar = "dev", label = T)
 # Predicted values
 y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 
-# SSE SST
-sst <- sum((ytest - mean(ytest))^2)
-sse <- sum((y_predicted_lasso - ytest)^2)
-
-rsquare_lasso <- 1- (sse/sst)
-
 # MSE
+MSE_lasso_1 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
 
-MSE_lasso <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-MSE_lasso
+# Lag 2
 
-# Checking by RMSE 2
+set.seed(12345)
 
-lambda.array <- seq(from = 0.01, to = 100, by = 0.01)
+size <- floor(0.8 * nrow(lag_2))
 
-set.seed(40028922)
+train_ind <- sample(seq_len(nrow(lag_2)), size = size)
 
-lag_0 <- lag_1
-
-size <- floor(0.8 * nrow(lag_0))
-
-train_ind <- sample(seq_len(nrow(lag_0)), size = size)
-
-train <- lag_0[train_ind, ]
+train <- lag_2[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
 ytrain <- subset(train, select = c(spreads))
 
-test <- lag_0[-train_ind, ]
+test <- lag_2[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
 ytest <- subset(test, select = c(spreads))
 
@@ -364,34 +359,22 @@ plot(lassofit, xvar = "dev", label = T)
 # Predicted values
 y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 
-# SSE SST
-sst <- sum((ytest - mean(ytest))^2)
-sse <- sum((y_predicted_lasso - ytest)^2)
-
-rsquare_lasso <- 1- (sse/sst)
-
 # MSE
+MSE_lasso_2 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
 
-MSE_lasso <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-MSE_lasso
+# Lag 3
 
-# Checking by RMSE 3
+set.seed(12345)
 
-lambda.array <- seq(from = 0.01, to = 100, by = 0.01)
+size <- floor(0.8 * nrow(lag_3))
 
-lag_0 <- lag_2
+train_ind <- sample(seq_len(nrow(lag_3)), size = size)
 
-set.seed(40028922)
-
-size <- floor(0.8 * nrow(lag_0))
-
-train_ind <- sample(seq_len(nrow(lag_0)), size = size)
-
-train <- lag_0[train_ind, ]
+train <- lag_3[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
 ytrain <- subset(train, select = c(spreads))
 
-test <- lag_0[-train_ind, ]
+test <- lag_3[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
 ytest <- subset(test, select = c(spreads))
 
@@ -408,34 +391,22 @@ plot(lassofit, xvar = "dev", label = T)
 # Predicted values
 y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 
-# SSE SST
-sst <- sum((ytest - mean(ytest))^2)
-sse <- sum((y_predicted_lasso - ytest)^2)
-
-rsquare_lasso <- 1- (sse/sst)
-
 # MSE
+MSE_lasso_3 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
 
-MSE_lasso <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-MSE_lasso
+# mean
 
-# Checking by RMSE 4
 
-lambda.array <- seq(from = 0.01, to = 100, by = 0.01)
 
-lag_0 <- mean
+size <- floor(0.8 * nrow(mean))
 
-set.seed(40028922)
+train_ind <- sample(seq_len(nrow(mean)), size = size)
 
-size <- floor(0.8 * nrow(lag_0))
-
-train_ind <- sample(seq_len(nrow(lag_0)), size = size)
-
-train <- lag_0[train_ind, ]
+train <- mean[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
 ytrain <- subset(train, select = c(spreads))
 
-test <- lag_0[-train_ind, ]
+test <- mean[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
 ytest <- subset(test, select = c(spreads))
 
@@ -452,13 +423,10 @@ plot(lassofit, xvar = "dev", label = T)
 # Predicted values
 y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 
-# SSE SST
-sst <- sum((ytest - mean(ytest))^2)
-sse <- sum((y_predicted_lasso - ytest)^2)
-
-rsquare_lasso <- 1- (sse/sst)
-
 # MSE
+MSE_lasso_mean <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
 
-MSE_lasso <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-MSE_lasso
+##
+MSE <- data.frame( MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)
+
+View(MSE)
