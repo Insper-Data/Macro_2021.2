@@ -167,10 +167,10 @@ lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap
 lag_0 <- na.omit(lag_0)
 lag_0 <- scale(lag_0)
 
-X <- subset(lag_0, select = -c(spreads))
+x <- subset(lag_0, select = -c(spreads))
 y <- lag_0[, c("spreads")]
 
-la.eq <- glmnet(X, y, lambda=lambda, 
+la.eq <- glmnet(x, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
@@ -187,10 +187,10 @@ lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatili
 lag_1 <- na.omit(lag_1)
 lag_1 <- scale(lag_1)
 
-X <- subset(lag_1, select = -c(spreads))
+x <- subset(lag_1, select = -c(spreads))
 y <- lag_1[, c("spreads")]
 
-la.eq <- glmnet(X, y, lambda=lambda, 
+la.eq <- glmnet(x, y, lambda=lambda, 
                 family="gaussian", 
                 intercept = F, alpha=1) 
 
@@ -430,3 +430,22 @@ MSE_lasso_mean <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
 MSE <- data.frame( MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)
 
 View(MSE)
+
+#-----------
+
+# Rascunho
+
+#perform k-fold cross-validation to find optimal lambda value
+cv_model <- cv.glmnet(x, y, alpha = 1)
+
+#find optimal lambda value that minimizes test MSE
+best_lambda <- cv_model$lambda.min
+best_lambda
+
+#produce plot of test MSE by lambda value
+plot(cv_model) 
+
+#
+
+best_model <- glmnet(x, y, alpha = 1, lambda = 0.01)
+coef(best_model)
