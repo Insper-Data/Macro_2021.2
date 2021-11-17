@@ -1408,8 +1408,6 @@ best_lambda
 #produce plot of test MSE by lambda value
 plot(cv_model) 
 
-#
-
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 coef(best_model)
 
