@@ -1,3 +1,5 @@
+#--------------------------------------------------------------------------------------------
+
 setwd("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2")
 
 rm(list=ls())
@@ -166,10 +168,11 @@ lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
 lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap_cur_USD, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
 lag_0 <- na.omit(lag_0)
-lag_0 <- scale(lag_0)
 
 x <- subset(lag_0, select = -c(spreads))
+x <- scale(x)
 y <- lag_0[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -188,11 +191,15 @@ train_ind <- sample(seq_len(nrow(lag_0)), size = size)
 
 train <- lag_0[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_0[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ### LASSO model
 
@@ -221,10 +228,11 @@ print(MSE_lasso_0)
 
 lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_ESGIp_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, lag_vix_EUR_1, spreads))
 lag_1 <- na.omit(lag_1)
-lag_1 <- scale(lag_1)
 
 x <- subset(lag_1, select = -c(spreads))
+x <- scale(x)
 y <- lag_1[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -243,11 +251,15 @@ train_ind <- sample(seq_len(nrow(lag_1)), size = size)
 
 train <- lag_1[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_1[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -276,10 +288,11 @@ print(MSE_lasso_1)
 
 lag_2 <- subset(panel_dataset_lags_2, select = c(lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_ESGIp_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, lag_vix_EUR_2, spreads))
 lag_2 <- na.omit(lag_2)
-lag_2 <- scale(lag_2)
 
 x <- subset(lag_2, select = -c(spreads))
+x <- scale(x)
 y <- lag_2[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -298,11 +311,15 @@ train_ind <- sample(seq_len(nrow(lag_2)), size = size)
 
 train <- lag_2[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_2[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -331,10 +348,11 @@ print(MSE_lasso_2)
 
 lag_3 <- subset(panel_dataset_lags_3, select = c(lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_ESGIp_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, lag_vix_EUR_3, spreads))
 lag_3 <- na.omit(lag_3)
-lag_3 <- scale(lag_3)
 
 x <- subset(lag_3, select = -c(spreads))
+x <- scale(x)
 y <- lag_3[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -353,11 +371,15 @@ train_ind <- sample(seq_len(nrow(lag_3)), size = size)
 
 train <- lag_3[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_3[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -386,10 +408,11 @@ print(MSE_lasso_3)
 
 mean <- subset(panel_dataset_mean_lags, select = c(lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_ESGIp_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, lag_vix_EUR_mean, spreads))
 mean <- na.omit(mean)
-mean <- scale(mean)
 
 x <- subset(mean, select = -c(spreads))
+x <- scale(x)
 y <- mean[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -406,11 +429,15 @@ train_ind <- sample(seq_len(nrow(mean)), size = size)
 
 train <- mean[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- mean[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -435,11 +462,11 @@ print(MSE_lasso_mean)
 
 # MSE and RMSE
 
-MSE_RMSE <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
+MSE_RMSE_AMEM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                        MSE = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
                        RMSE = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)))
 
-View(MSE_RMSE)
+View(MSE_RMSE_AMEM)
 
 #---------------
 
@@ -641,10 +668,11 @@ lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
 lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap_cur_USD, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
 lag_0 <- na.omit(lag_0)
-lag_0 <- scale(lag_0)
 
 x <- subset(lag_0, select = -c(spreads))
+x <- scale(x)
 y <- lag_0[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -663,11 +691,15 @@ train_ind <- sample(seq_len(nrow(lag_0)), size = size)
 
 train <- lag_0[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_0[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ### LASSO model
 
@@ -696,10 +728,11 @@ print(MSE_lasso_0)
 
 lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_ESGIp_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, lag_vix_EUR_1, spreads))
 lag_1 <- na.omit(lag_1)
-lag_1 <- scale(lag_1)
 
 x <- subset(lag_1, select = -c(spreads))
+x <- scale(x)
 y <- lag_1[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -718,11 +751,15 @@ train_ind <- sample(seq_len(nrow(lag_1)), size = size)
 
 train <- lag_1[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_1[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -751,10 +788,11 @@ print(MSE_lasso_1)
 
 lag_2 <- subset(panel_dataset_lags_2, select = c(lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_ESGIp_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, lag_vix_EUR_2, spreads))
 lag_2 <- na.omit(lag_2)
-lag_2 <- scale(lag_2)
 
 x <- subset(lag_2, select = -c(spreads))
+x <- scale(x)
 y <- lag_2[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -773,11 +811,15 @@ train_ind <- sample(seq_len(nrow(lag_2)), size = size)
 
 train <- lag_2[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_2[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -806,10 +848,11 @@ print(MSE_lasso_2)
 
 lag_3 <- subset(panel_dataset_lags_3, select = c(lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_ESGIp_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, lag_vix_EUR_3, spreads))
 lag_3 <- na.omit(lag_3)
-lag_3 <- scale(lag_3)
 
 x <- subset(lag_3, select = -c(spreads))
+x <- scale(x)
 y <- lag_3[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -828,11 +871,15 @@ train_ind <- sample(seq_len(nrow(lag_3)), size = size)
 
 train <- lag_3[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_3[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -861,10 +908,11 @@ print(MSE_lasso_3)
 
 mean <- subset(panel_dataset_mean_lags, select = c(lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_ESGIp_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, lag_vix_EUR_mean, spreads))
 mean <- na.omit(mean)
-mean <- scale(mean)
 
 x <- subset(mean, select = -c(spreads))
+x <- scale(x)
 y <- mean[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -881,11 +929,15 @@ train_ind <- sample(seq_len(nrow(mean)), size = size)
 
 train <- mean[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- mean[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -910,11 +962,11 @@ print(MSE_lasso_mean)
 
 # MSE and RMSE
 
-MSE_RMSE <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
+MSE_RMSE_AM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                        MSE = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
                        RMSE = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)))
 
-View(MSE_RMSE)
+View(MSE_RMSE_AM)
 
 #---------------
 
@@ -957,15 +1009,12 @@ library(glmnet)
 
 dataset_total_jan_2021 <- read.csv("Bases/merged.csv")
 
-#--------------------------------------------------------------------------------------------
-
-
 # Setting panel dataset
 panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
 
 #------------
 
-# Panel dataset for AM 
+# Panel dataset for EM
 panel_dataset <- panel_dataset %>% 
   filter(develop == "EM",
          country != "United States")
@@ -1119,10 +1168,11 @@ lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
 lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap_cur_USD, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
 lag_0 <- na.omit(lag_0)
-lag_0 <- scale(lag_0)
 
 x <- subset(lag_0, select = -c(spreads))
+x <- scale(x)
 y <- lag_0[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1141,11 +1191,15 @@ train_ind <- sample(seq_len(nrow(lag_0)), size = size)
 
 train <- lag_0[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_0[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ### LASSO model
 
@@ -1174,10 +1228,11 @@ print(MSE_lasso_0)
 
 lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_ESGIp_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, lag_vix_EUR_1, spreads))
 lag_1 <- na.omit(lag_1)
-lag_1 <- scale(lag_1)
 
 x <- subset(lag_1, select = -c(spreads))
+x <- scale(x)
 y <- lag_1[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1196,11 +1251,15 @@ train_ind <- sample(seq_len(nrow(lag_1)), size = size)
 
 train <- lag_1[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_1[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -1229,10 +1288,11 @@ print(MSE_lasso_1)
 
 lag_2 <- subset(panel_dataset_lags_2, select = c(lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_ESGIp_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, lag_vix_EUR_2, spreads))
 lag_2 <- na.omit(lag_2)
-lag_2 <- scale(lag_2)
 
 x <- subset(lag_2, select = -c(spreads))
+x <- scale(x)
 y <- lag_2[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1251,11 +1311,15 @@ train_ind <- sample(seq_len(nrow(lag_2)), size = size)
 
 train <- lag_2[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_2[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -1284,10 +1348,11 @@ print(MSE_lasso_2)
 
 lag_3 <- subset(panel_dataset_lags_3, select = c(lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_ESGIp_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, lag_vix_EUR_3, spreads))
 lag_3 <- na.omit(lag_3)
-lag_3 <- scale(lag_3)
 
 x <- subset(lag_3, select = -c(spreads))
+x <- scale(x)
 y <- lag_3[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1306,11 +1371,15 @@ train_ind <- sample(seq_len(nrow(lag_3)), size = size)
 
 train <- lag_3[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_3[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -1339,10 +1408,11 @@ print(MSE_lasso_3)
 
 mean <- subset(panel_dataset_mean_lags, select = c(lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_ESGIp_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, lag_vix_EUR_mean, spreads))
 mean <- na.omit(mean)
-mean <- scale(mean)
 
 x <- subset(mean, select = -c(spreads))
+x <- scale(x)
 y <- mean[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1359,11 +1429,15 @@ train_ind <- sample(seq_len(nrow(mean)), size = size)
 
 train <- mean[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- mean[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ## LASSO model
 
@@ -1388,11 +1462,11 @@ print(MSE_lasso_mean)
 
 # MSE and RMSE
 
-MSE_RMSE <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
+MSE_RMSE_EM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                        MSE = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
                        RMSE = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)))
 
-View(MSE_RMSE)
+View(MSE_RMSE_EM)
 
 #---------------
 
@@ -1407,6 +1481,8 @@ best_lambda
 
 #produce plot of test MSE by lambda value
 plot(cv_model) 
+
+#
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 coef(best_model)
@@ -1583,10 +1659,11 @@ lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
 lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap_cur_USD, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads, lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_ESGIp_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, lag_vix_EUR_1, lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_ESGIp_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, lag_vix_EUR_2, lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_ESGIp_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, lag_vix_EUR_3, lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_ESGIp_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, lag_vix_EUR_mean))
 lag_0 <- na.omit(lag_0)
-lag_0 <- scale(lag_0)
 
 x <- subset(lag_0, select = -c(spreads))
+x <- scale(x)
 y <- lag_0[, c("spreads")]
+y <- scale(y)
 
 la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
 
@@ -1605,11 +1682,15 @@ train_ind <- sample(seq_len(nrow(lag_0)), size = size)
 
 train <- lag_0[train_ind, ]
 xtrain <- subset(train, select = -c(spreads))
+xtrain <- scale(xtrain)
 ytrain <- subset(train, select = c(spreads))
+ytrain <- scale(ytrain)
 
 test <- lag_0[-train_ind, ]
 xtest <- subset(test, select = -c(spreads))
+xtest <- scale(xtest)
 ytest <- subset(test, select = c(spreads))
+ytest <- scale(ytest)
 
 ### LASSO model
 
@@ -1627,9 +1708,8 @@ y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 
 # MSE
 
-MSE_lasso_0 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_0)
-print(sqrt(MSE_lasso_0))
+MSE_lasso <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
+print(sqrt(MSE_lasso))
 
 #---------------
 
