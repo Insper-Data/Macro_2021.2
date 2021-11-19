@@ -156,7 +156,7 @@ panel_dataset_mean_lags <- panel_dataset %>%
 
 ## Excluding real_interest_rate and taxes due to NA values
 
-lambda <- 0.01
+lambda <- 0.1
 
 lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
@@ -218,7 +218,7 @@ y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
 # MSE
 
 MSE_lasso_0 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_0)
+print(sqrt(MSE_lasso_0))
 
 #---------------
 
@@ -512,7 +512,7 @@ dataset_total_jan_2021 <- read.csv("Bases/merged.csv")
 # Setting panel dataset
 panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
 
-#------------
+#---------------
 
 # Panel dataset for AM 
 panel_dataset <- panel_dataset %>% 
@@ -1012,7 +1012,7 @@ dataset_total_jan_2021 <- read.csv("Bases/merged.csv")
 # Setting panel dataset
 panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
 
-#------------
+#---------------
 
 # Panel dataset for EM
 panel_dataset <- panel_dataset %>% 
