@@ -7,7 +7,6 @@ library(plm)
 library(lmtest)
 library(caret)
 
-install.packages("caret")
 
 
 dataset_total_jan_2021 <- read.csv("C:/Users/mathe/OneDrive/Documentos/GitHub/Macro_2021.2/Bases/merged.csv")
