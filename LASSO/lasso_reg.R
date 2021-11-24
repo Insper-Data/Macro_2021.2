@@ -166,7 +166,7 @@ lambda.array <- seq(from = 0.01, to = 5, by = 0.01)
 
 ## Identifying the variables
 
-lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, GDP_per_cap_cur_USD, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
+lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
 lag_0 <- na.omit(lag_0)
 
 x <- subset(lag_0, select = -c(spreads))
