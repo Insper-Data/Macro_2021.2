@@ -10,7 +10,7 @@ library(lmtest)
 
 
 
-dataset_total_jan_2021 <- read.csv("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2/Bases/merged2.csv")
+dataset_total_jan_2021 <- read.csv("C:/Users/mathe/OneDrive/Documentos/GitHub/Macro_2021.2/Bases/merged2.csv")
 
 panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
 
@@ -143,14 +143,7 @@ reg2.lag_0_c <- coeftest(reg2.lag_0, vcovHC(reg2.lag_0, type="sss", cluster="gro
 reg3.lag_0_c <- coeftest(reg3.lag_0, vcovHC(reg3.lag_0, type="sss", cluster="group", method = "white2"))[,2]
 reg4.lag_0_c <- coeftest(reg4.lag_0, vcovHC(reg4.lag_0, type="sss", cluster="group", method = "white2"))[,2]
 
-# Output for LaTeX:
-stargazer(reg1.lag_0, 
-    reg2.lag_0, 
-    reg3.lag_0, 
-    reg4.lag_0,
-    title = "Painel Dinâmico variáveis sem Lag", type = "html", 
-    covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
-    dep.var.labels = c("Spreads de títulos de 10 anos"))
+
 
 # Output for LaTeX:
 stargazer(reg1.lag_0, 
@@ -186,13 +179,81 @@ reg3.lag_1_c <- coeftest(reg3.lag_1, vcovHC(reg3.lag_1, type="sss", cluster="gro
 reg4.lag_1_c <- coeftest(reg4.lag_1, vcovHC(reg4.lag_1, type="sss", cluster="group", method = "white2"))[,2]
 
 # Output for LaTeX:
-#stargazer(reg1.lag_0, 
-#    reg2.lag_0, 
-#   reg3.lag_0, 
-#  reg4.lag_0,
-# title = "Painel Dinâmico variáveis sem Lag", type = "html", 
-#covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
-#dep.var.labels = c("Spreads de títulos de 10 anos"))
+stargazer(reg1.lag_1, 
+          reg2.lag_1, 
+          reg3.lag_1, 
+          reg4.lag_1,
+          title = "Painel sem Lag", type = "text", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_1_c, reg2.lag_1_c, reg3.lag_1_c, reg4.lag_1_c),
+          omit.stat = "f",
+          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
+          dep.var.labels = c("Spreads de títulos de 10 anos"))
+
+
+#--------------------------------------------------------------------------------------------
+# TABLE 2 -> T-2 LAGS
+#--------------------------------------------------------------------------------------------
+
+# Formula for dynamic model:
+formula_2 <- spreads ~ lag_fx_volatility_2 + lag_nominal_rate_2 + lag_taxes_2 + lag_account_balance_2 + lag_lending_borroeing_rate_2 + lag_unemployment_2 + lag_inflation_mean_2 + lag_debt_to_GDP_2 + lag_real_interest_rate_2 + lag_Ep_2 + lag_Sp_2 + lag_Gp_2 + lag_vix_EUA_2 
+
+# Dynamic Panel regressions:
+reg1.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "individual")
+reg2.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "time")
+reg3.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "twoways")
+reg4.lag_2<- plm(formula_2, data = panel_dataset_lags_2, model = "pooling")
+
+
+# Clusterized errors:
+reg1.lag_2_c <- coeftest(reg1.lag_2, vcovHC(reg1.lag_2, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_2_c <- coeftest(reg2.lag_2, vcovHC(reg2.lag_2, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_2_c <- coeftest(reg3.lag_2, vcovHC(reg3.lag_2, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_2_c <- coeftest(reg4.lag_2, vcovHC(reg4.lag_2, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.lag_2, 
+          reg2.lag_2, 
+          reg3.lag_2, 
+          reg4.lag_2,
+          title = "Painel sem Lag", type = "text", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_2_c, reg2.lag_2_c, reg3.lag_2_c, reg4.lag_2_c),
+          omit.stat = "f",
+          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
+          dep.var.labels = c("Spreads de títulos de 10 anos"))
+
+#--------------------------------------------------------------------------------------------
+# TABLE 3 -> T-3 LAGS
+#--------------------------------------------------------------------------------------------
+
+# Formula for dynamic model:
+formula_3 <- spreads ~ lag_fx_volatility_3 + lag_nominal_rate_3 + lag_taxes_3 + lag_account_balance_3 + lag_lending_borroeing_rate_3 + lag_unemployment_3 + lag_inflation_mean_3 + lag_debt_to_GDP_3 + lag_real_interest_rate_3 + lag_Ep_3 + lag_Sp_3 + lag_Gp_3 + lag_vix_EUA_3 
+
+# Dynamic Panel regressions:
+reg1.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "individual")
+reg2.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "time")
+reg3.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "twoways")
+reg4.lag_3<- plm(formula_3, data = panel_dataset_lags_3, model = "pooling")
+
+
+# Clusterized errors:
+reg1.lag_3_c <- coeftest(reg1.lag_3, vcovHC(reg1.lag_3, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_3_c <- coeftest(reg2.lag_3, vcovHC(reg1.lag_3, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_3_c <- coeftest(reg3.lag_3, vcovHC(reg3.lag_3, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_3_c <- coeftest(reg4.lag_3, vcovHC(reg4.lag_3, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.lag_3, 
+          reg2.lag_3, 
+          reg3.lag_3, 
+          reg4.lag_3,
+          title = "Painel sem Lag", type = "text", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_3_c, reg2.lag_3_c, reg3.lag_3_c, reg4.lag_3_c),
+          omit.stat = "f",
+          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
+          dep.var.labels = c("Spreads de títulos de 10 anos"))
 
 #--------------------------------------------------------------------------------------------
 # TABLE 4 -> T-mean
@@ -215,11 +276,14 @@ reg3.lag_mean_c <- coeftest(reg3.lag_mean, vcovHC(reg3.lag_mean, type="sss", clu
 reg4.lag_mean_c <- coeftest(reg4.lag_mean, vcovHC(reg4.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
 
 # Output for LaTeX:
-#stargazer(reg1.lag_0, 
-#    reg2.lag_0, 
-#   reg3.lag_0, 
-#  reg4.lag_0,
-# title = "Painel Dinâmico variáveis sem Lag", type = "html", 
-#covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
-#dep.var.labels = c("Spreads de títulos de 10 anos"))
+stargazer(reg1.lag_mean, 
+          reg2.lag_mean, 
+          reg3.lag_mean, 
+          reg4.lag_mean,
+          title = "Painel sem Lag", type = "text", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
+          omit.stat = "f",
+          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
+          dep.var.labels = c("Spreads de títulos de 10 anos"))
 
