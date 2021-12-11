@@ -15,9 +15,9 @@ library(glmnet)
 
 # Database ----------------------------------------------------------------
 
-dataset_total_jan_2021 <- read.csv("Bases/merged2.csv")
+data <- read.csv("Bases/merged2.csv")
 
-panel_dataset <- pdata.frame(dataset_total_jan_2021, index = c("country", "year"))
+panel_dataset <- pdata.frame(data, index = c("country", "year"))
 
 panel_dataset <- panel_dataset %>% 
   group_by(country) %>% 
@@ -27,7 +27,6 @@ panel_dataset <- panel_dataset %>%
     # Adding foreign debt to GDP
     foreign_debt_to_gdp = foreign_debt / GDP_cur  
   )
-
 
 # Adding Lags + mean ------------------------------------------------------
 
@@ -52,13 +51,11 @@ panel_dataset_lags <- panel_dataset %>%
     lag_inflation_mean_1 = dplyr::lag(inflation_mean,1),
     lag_debt_to_GDP_1 = dplyr::lag(debt_to_GDP,1),
     lag_real_interest_rate_1 = dplyr::lag(real_interest_rate,1),
-    lag_ESGIp_1 = dplyr::lag(ESGIp,1),
     lag_Ep_1 = dplyr::lag(Ep,1),
     lag_Sp_1 = dplyr::lag(Sp,1),
     lag_Gp_1 = dplyr::lag(Gp,1),
     lag_foreign_debt_to_gdp_1 = dplyr::lag(foreign_debt_to_gdp, 1),
-    lag_vix_EUA_1 = dplyr::lag(vix_EUA, 1),
-    lag_vix_EUR_1 = dplyr::lag(vix_EUR, 1))
+    lag_vix_EUA_1 = dplyr::lag(vix_EUA, 1))
 
 # 2 lag 
 
@@ -82,13 +79,11 @@ panel_dataset_lags_2 <- panel_dataset %>%
     lag_inflation_mean_2 = dplyr::lag(inflation_mean,2),
     lag_debt_to_GDP_2 = dplyr::lag(debt_to_GDP,2),
     lag_real_interest_rate_2 = dplyr::lag(real_interest_rate,2),
-    lag_ESGIp_2 = dplyr::lag(ESGIp,2),
     lag_Ep_2 = dplyr::lag(Ep,2),
     lag_Sp_2 = dplyr::lag(Sp,2),
     lag_Gp_2 = dplyr::lag(Gp,2),
     lag_foreign_debt_to_gdp_2 = dplyr::lag(foreign_debt_to_gdp, 2),
-    lag_vix_EUA_2 = dplyr::lag(vix_EUA, 2),
-    lag_vix_EUR_2 = dplyr::lag(vix_EUR, 2))
+    lag_vix_EUA_2 = dplyr::lag(vix_EUA, 2))
 
 # 3 lag 
 
@@ -112,13 +107,11 @@ panel_dataset_lags_3 <- panel_dataset %>%
     lag_inflation_mean_3 = dplyr::lag(inflation_mean,3),
     lag_debt_to_GDP_3 = dplyr::lag(debt_to_GDP,3),
     lag_real_interest_rate_3 = dplyr::lag(real_interest_rate,3),
-    lag_ESGIp_3 = dplyr::lag(ESGIp,3),
     lag_Ep_3 = dplyr::lag(Ep,3),
     lag_Sp_3 = dplyr::lag(Sp,3),
     lag_Gp_3 = dplyr::lag(Gp,3),
     lag_foreign_debt_to_gdp_3 = dplyr::lag(foreign_debt_to_gdp, 3),
-    lag_vix_EUA_3 = dplyr::lag(vix_EUA, 3),
-    lag_vix_EUR_3 = dplyr::lag(vix_EUR, 3))
+    lag_vix_EUA_3 = dplyr::lag(vix_EUA, 3))
 
 # mean 
 
@@ -141,28 +134,23 @@ panel_dataset_mean_lags <- panel_dataset %>%
     lag_inflation_mean_mean = (dplyr::lag(inflation_mean,1)+dplyr::lag(inflation_mean,2)+dplyr::lag(inflation_mean,3))/3,
     lag_debt_to_GDP_mean = (dplyr::lag(debt_to_GDP,1)+dplyr::lag(debt_to_GDP,2)+dplyr::lag(debt_to_GDP,3))/3,
     lag_real_interest_rate_mean = (dplyr::lag(real_interest_rate,1)+dplyr::lag(real_interest_rate,2)+dplyr::lag(real_interest_rate,3))/3,
-    lag_ESGIp_mean = (dplyr::lag(ESGIp,1)+dplyr::lag(ESGIp,2)+dplyr::lag(ESGIp,3))/3,
     lag_Ep_mean = (dplyr::lag(Ep,1)+dplyr::lag(Ep,2)+dplyr::lag(Ep,3))/3,
     lag_Sp_mean = (dplyr::lag(Sp,1)+dplyr::lag(Sp,2)+dplyr::lag(Sp,3))/3,
     lag_Gp_mean = (dplyr::lag(Gp,1)+dplyr::lag(Gp,2)+dplyr::lag(Gp,3))/3,
     lag_foreign_debt_to_gdp_mean = (dplyr::lag(foreign_debt_to_gdp, 1) +dplyr::lag(foreign_debt_to_gdp, 2) + dplyr::lag(foreign_debt_to_gdp, 3))/3,
-    lag_vix_EUA_mean = (dplyr::lag(vix_EUA, 1) + dplyr::lag(vix_EUA, 2) + dplyr::lag(vix_EUA, 3))/ 3,
-    lag_vix_EUR_mean = (dplyr::lag(vix_EUR, 1) + dplyr::lag(vix_EUR, 2) + dplyr::lag(vix_EUR, 3))/ 3)
-
+    lag_vix_EUA_mean = (dplyr::lag(vix_EUA, 1) + dplyr::lag(vix_EUA, 2) + dplyr::lag(vix_EUA, 3))/ 3)
 
 # LASSO regression --------------------------------------------------------
 
 ## Excluding real_interest_rate and taxes due to NA values
 
-lambda <- 0.1
-
-lambda.array <- seq(from = 0, to = 1, by = 0.0001)
+lambda.array <- seq(from = 0, to = 1, by = 0.001)
 
 # Lag 0 (no lags) ---------------------------------------------------------
 
 # Identifying the variables
 
-lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, ESGIp, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, vix_EUR, spreads))
+lag_0 <- subset(panel_dataset, select = c(GDP_growth, fx_volatility, nominal_rate, account_balance, lending_borroeing_rate, unemployment, inflation_mean, debt_to_GDP, Ep, Sp, Gp, foreign_debt_to_gdp, vix_EUA, spreads))
 
 lag_0 <- na.omit(lag_0)
 
@@ -191,13 +179,12 @@ plot(cv_model)
 ### Best model (best lambda) coefficients
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
-coef(best_model)
 
 ### Mean squared error (MSE)
 
 MSE_lasso_0 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = min(lambda) and 0.1
+# Comparing coefficients and MSE of lambda = best_lambda and 0.1
 
 table0 <- as.data.frame(as.matrix(coef(best_model)))
 colnames(table0) <- c("Best lambda")
@@ -205,7 +192,6 @@ colnames(table0) <- c("Best lambda")
 ## lambda = 0.1
 
 set.seed(1234)
-
 cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
 best_lambda_ <- cv_model_$lambda.min
 best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
@@ -214,20 +200,18 @@ MSE_lasso_0_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
 ## Adjusting data
 
 table0_ = as.data.frame(as.matrix(coef(best_model_)))
-
 table0 <- cbind(table0, "lambda = 0.1" = table0_$s0)
 
 table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_)
-rownames(table0)[17] <- c("MSE")
+rownames(table0)[15] <- c("MSE")
 View(table0)
 
-#---------------
+# Lag 1 -------------------------------------------------------------------
 
-# Lag 1
+# Identifying the variables
 
-## Identifying the variables
+lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, spreads))
 
-lag_1 <- subset(panel_dataset_lags, select = c(lag_GDP_growth_1, lag_fx_volatility_1, lag_nominal_rate_1, lag_account_balance_1, lag_lending_borroeing_rate_1, lag_unemployment_1, lag_inflation_mean_1, lag_debt_to_GDP_1, lag_ESGIp_1, lag_Ep_1, lag_Sp_1, lag_Gp_1, lag_foreign_debt_to_gdp_1, lag_vix_EUA_1, lag_vix_EUR_1, spreads))
 lag_1 <- na.omit(lag_1)
 
 x <- subset(lag_1, select = -c(spreads))
@@ -235,59 +219,59 @@ x <- scale(x)
 y <- lag_1[, c("spreads")]
 y <- scale(y)
 
-la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
+# LASSO regression
 
-df1.comp <- data.frame(Lasso   = la.eq$beta[,1])
-df1.comp
+## Perform k-fold cross-validation to find optimal lambda value
 
-## Calculating MSE using min(lambda)
+set.seed(1234)
 
-### Training x test
+cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
 
-set.seed(12345)
+### Find optimal lambda value that minimizes test MSE
 
-size <- floor(0.8 * nrow(lag_1))
+best_lambda <- cv_model$lambda.min
+best_lambda
 
-train_ind <- sample(seq_len(nrow(lag_1)), size = size)
+### Produce plot of test MSE by lambda value
 
-train <- lag_1[train_ind, ]
-xtrain <- subset(train, select = -c(spreads))
-xtrain <- scale(xtrain)
-ytrain <- subset(train, select = c(spreads))
-ytrain <- scale(ytrain)
+plot(cv_model)
 
-test <- lag_1[-train_ind, ]
-xtest <- subset(test, select = -c(spreads))
-xtest <- scale(xtest)
-ytest <- subset(test, select = c(spreads))
-ytest <- scale(ytest)
+### Best model (best lambda) coefficients
 
-## LASSO model
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-lassofit <- glmnet(xtrain, ytrain, alpha = 1, lambda = lambda.array)
+### Mean squared error (MSE)
 
-plot(lassofit, xvar = "lambda", label = T)
+MSE_lasso_1 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Goodness of fit
+# Comparing coefficients and MSE of lambda = best_lambda and 0.1
 
-plot(lassofit, xvar = "dev", label = T)
+table1 <- as.data.frame(as.matrix(coef(best_model)))
+colnames(table1) <- c("Best lambda")
 
-# Predicted values
+## lambda = 0.1
 
-y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
+set.seed(1234)
+cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
+best_lambda_ <- cv_model_$lambda.min
+best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
+MSE_lasso_1_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
 
-# MSE
+## Adjusting data
 
-MSE_lasso_1 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_1)
+table1_ = as.data.frame(as.matrix(coef(best_model_)))
+table1 <- cbind(table1, "lambda = 0.1" = table1_$s0)
 
-#---------------
+table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_)
+rownames(table1)[15] <- c("MSE")
+View(table1)
 
-# Lag 2
+# Lag 2 -------------------------------------------------------------------
 
-## Identifying the variables
+# Identifying the variables
 
-lag_2 <- subset(panel_dataset_lags_2, select = c(lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_ESGIp_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, lag_vix_EUR_2, spreads))
+lag_2 <- subset(panel_dataset_lags_2, select = c(lag_GDP_growth_2, lag_fx_volatility_2, lag_nominal_rate_2, lag_account_balance_2, lag_lending_borroeing_rate_2, lag_unemployment_2, lag_inflation_mean_2, lag_debt_to_GDP_2, lag_Ep_2, lag_Sp_2, lag_Gp_2, lag_foreign_debt_to_gdp_2, lag_vix_EUA_2, spreads))
+
 lag_2 <- na.omit(lag_2)
 
 x <- subset(lag_2, select = -c(spreads))
@@ -295,59 +279,59 @@ x <- scale(x)
 y <- lag_2[, c("spreads")]
 y <- scale(y)
 
-la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
+# LASSO regression
 
-df2.comp <- data.frame(Lasso   = la.eq$beta[,1])
-df2.comp
+## Perform k-fold cross-validation to find optimal lambda value
 
-## Calculating MSE using min(lambda)
+set.seed(1234)
 
-### Training x test
+cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
 
-set.seed(12345)
+### Find optimal lambda value that minimizes test MSE
 
-size <- floor(0.8 * nrow(lag_2))
+best_lambda <- cv_model$lambda.min
+best_lambda
 
-train_ind <- sample(seq_len(nrow(lag_2)), size = size)
+### Produce plot of test MSE by lambda value
 
-train <- lag_2[train_ind, ]
-xtrain <- subset(train, select = -c(spreads))
-xtrain <- scale(xtrain)
-ytrain <- subset(train, select = c(spreads))
-ytrain <- scale(ytrain)
+plot(cv_model)
 
-test <- lag_2[-train_ind, ]
-xtest <- subset(test, select = -c(spreads))
-xtest <- scale(xtest)
-ytest <- subset(test, select = c(spreads))
-ytest <- scale(ytest)
+### Best model (best lambda) coefficients
 
-## LASSO model
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-lassofit <- glmnet(xtrain, ytrain, alpha = 1, lambda = lambda.array)
+### Mean squared error (MSE)
 
-plot(lassofit, xvar = "lambda", label = T)
+MSE_lasso_2 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Goodness of fit
+# Comparing coefficients and MSE of lambda = best_lambda and 0.1
 
-plot(lassofit, xvar = "dev", label = T)
+table2 <- as.data.frame(as.matrix(coef(best_model)))
+colnames(table2) <- c("Best lambda")
 
-# Predicted values
+## lambda = 0.1
 
-y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
+set.seed(1234)
+cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
+best_lambda_ <- cv_model_$lambda.min
+best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
+MSE_lasso_2_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
 
-# MSE
+## Adjusting data
 
-MSE_lasso_2 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_2)
+table2_ = as.data.frame(as.matrix(coef(best_model_)))
+table2 <- cbind(table2, "lambda = 0.1" = table2_$s0)
 
-#---------------
+table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_)
+rownames(table2)[15] <- c("MSE")
+View(table2)
 
-# Lag 3
+# Lag 3 -------------------------------------------------------------------
 
-## Identifying the variables
+# Identifying the variables
 
-lag_3 <- subset(panel_dataset_lags_3, select = c(lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_ESGIp_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, lag_vix_EUR_3, spreads))
+lag_3 <- subset(panel_dataset_lags_3, select = c(lag_GDP_growth_3, lag_fx_volatility_3, lag_nominal_rate_3, lag_account_balance_3, lag_lending_borroeing_rate_3, lag_unemployment_3, lag_inflation_mean_3, lag_debt_to_GDP_3, lag_Ep_3, lag_Sp_3, lag_Gp_3, lag_foreign_debt_to_gdp_3, lag_vix_EUA_3, spreads))
+
 lag_3 <- na.omit(lag_3)
 
 x <- subset(lag_3, select = -c(spreads))
@@ -355,59 +339,59 @@ x <- scale(x)
 y <- lag_3[, c("spreads")]
 y <- scale(y)
 
-la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
+# LASSO regression
 
-df3.comp <- data.frame(Lasso   = la.eq$beta[,1])
-df3.comp
+## Perform k-fold cross-validation to find optimal lambda value
 
-## Calculating MSE using min(lambda)
+set.seed(1234)
 
-### Training x test
+cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
 
-set.seed(12345)
+### Find optimal lambda value that minimizes test MSE
 
-size <- floor(0.8 * nrow(lag_3))
+best_lambda <- cv_model$lambda.min
+best_lambda
 
-train_ind <- sample(seq_len(nrow(lag_3)), size = size)
+### Produce plot of test MSE by lambda value
 
-train <- lag_3[train_ind, ]
-xtrain <- subset(train, select = -c(spreads))
-xtrain <- scale(xtrain)
-ytrain <- subset(train, select = c(spreads))
-ytrain <- scale(ytrain)
+plot(cv_model)
 
-test <- lag_3[-train_ind, ]
-xtest <- subset(test, select = -c(spreads))
-xtest <- scale(xtest)
-ytest <- subset(test, select = c(spreads))
-ytest <- scale(ytest)
+### Best model (best lambda) coefficients
 
-## LASSO model
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-lassofit <- glmnet(xtrain, ytrain, alpha = 1, lambda = lambda.array)
+### Mean squared error (MSE)
 
-plot(lassofit, xvar = "lambda", label = T)
+MSE_lasso_3 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Goodness of fit
+# Comparing coefficients and MSE of lambda = best_lambda and 0.1
 
-plot(lassofit, xvar = "dev", label = T)
+table3 <- as.data.frame(as.matrix(coef(best_model)))
+colnames(table3) <- c("Best lambda")
 
-# Predicted values
+## lambda = 0.1
 
-y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
+set.seed(1234)
+cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
+best_lambda_ <- cv_model_$lambda.min
+best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
+MSE_lasso_3_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
 
-# MSE
+## Adjusting data
 
-MSE_lasso_3 <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_3)
+table3_ = as.data.frame(as.matrix(coef(best_model_)))
+table3 <- cbind(table3, "lambda = 0.1" = table3_$s0)
 
-#---------------
+table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_)
+rownames(table3)[15] <- c("MSE")
+View(table3)
 
-# mean
+# Mean --------------------------------------------------------------------
 
-## Identifying the variables
+# Identifying the variables
 
-mean <- subset(panel_dataset_mean_lags, select = c(lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_ESGIp_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, lag_vix_EUR_mean, spreads))
+mean <- subset(panel_dataset_mean_lags, select = c(lag_GDP_growth_mean, lag_fx_volatility_mean, lag_nominal_rate_mean, lag_account_balance_mean, lag_lending_borroeing_rate_mean, lag_unemployment_mean, lag_inflation_mean_mean, lag_debt_to_GDP_mean, lag_Ep_mean, lag_Sp_mean, lag_Gp_mean, lag_foreign_debt_to_gdp_mean, lag_vix_EUA_mean, spreads))
+
 mean <- na.omit(mean)
 
 x <- subset(mean, select = -c(spreads))
@@ -415,60 +399,64 @@ x <- scale(x)
 y <- mean[, c("spreads")]
 y <- scale(y)
 
-la.eq <- glmnet(x, y, lambda=lambda, family="gaussian", intercept = F, alpha=1) 
+# LASSO regression
 
-df_mean.comp <- data.frame(Lasso = la.eq$beta[,1])
-df_mean.comp
+## Perform k-fold cross-validation to find optimal lambda value
 
-## Calculating MSE using min(lambda)
+set.seed(1234)
 
-### Training x test
+cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
 
-size <- floor(0.8 * nrow(mean))
+### Find optimal lambda value that minimizes test MSE
 
-train_ind <- sample(seq_len(nrow(mean)), size = size)
+best_lambda <- cv_model$lambda.min
+best_lambda
 
-train <- mean[train_ind, ]
-xtrain <- subset(train, select = -c(spreads))
-xtrain <- scale(xtrain)
-ytrain <- subset(train, select = c(spreads))
-ytrain <- scale(ytrain)
+### Produce plot of test MSE by lambda value
 
-test <- mean[-train_ind, ]
-xtest <- subset(test, select = -c(spreads))
-xtest <- scale(xtest)
-ytest <- subset(test, select = c(spreads))
-ytest <- scale(ytest)
+plot(cv_model)
 
-## LASSO model
+### Best model (best lambda) coefficients
 
-lassofit <- glmnet(xtrain, ytrain, alpha = 1, lambda = lambda.array)
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-plot(lassofit, xvar = "lambda", label = T)
+### Mean squared error (MSE)
 
-# Goodness of fit
+MSE_lasso_mean <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-plot(lassofit, xvar = "dev", label = T)
+# Comparing coefficients and MSE of lambda = best_lambda and 0.1
 
-# Predicted values
+table_mean <- as.data.frame(as.matrix(coef(best_model)))
+colnames(table_mean) <- c("Best lambda")
 
-y_predicted_lasso <- predict(lassofit, s = min(lambda.array), newx = xtest)
+## lambda = 0.1
 
-# MSE
+set.seed(1234)
+cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
+best_lambda_ <- cv_model_$lambda.min
+best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
+MSE_lasso_mean_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
 
-MSE_lasso_mean <- sum((y_predicted_lasso - ytest)^2) / length(y_predicted_lasso)
-print(MSE_lasso_mean)
+## Adjusting data
 
-#---------------
+table_mean_ = as.data.frame(as.matrix(coef(best_model_)))
+table_mean <- cbind(table_mean, "lambda = 0.1" = table_mean_$s0)
 
-# MSE and RMSE
+table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_)
+rownames(table_mean)[15] <- c("MSE")
+View(table_mean)
+
+# MSE and RMSE of each lag ------------------------------------------------
 
 MSE_RMSE_AMEM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
-                            MSE = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
-                            RMSE = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)))
+                            MSE_best = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
+                            MSE_0.1 = c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_),
+                            RMSE_best = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)),
+                            RMSE_0.1 = sqrt(c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_)))
+
+### Interpretability x predictive power
 
 View(MSE_RMSE_AMEM)
-
 
 #--------------------------------------------------------------------------------------------
 
