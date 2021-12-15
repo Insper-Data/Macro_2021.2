@@ -1,3 +1,5 @@
+# LASSO -------------------------------------------------------------------
+
 # AM + EM -----------------------------------------------------------------
 
 setwd("~/Insper/Data/Projeto Macro/Data_Macro_ESG/Macro_2021.2")
@@ -36,11 +38,6 @@ panel_dataset_lags <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -63,11 +60,6 @@ panel_dataset_lags_2 <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -91,11 +83,6 @@ panel_dataset_lags_3 <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -119,11 +106,6 @@ panel_dataset_mean_lags <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_mean = (dplyr::lag(GDP_growth,1) + dplyr::lag(GDP_growth,2) + dplyr::lag(GDP_growth,3))/3, 
     lag_fx_volatility_mean = (dplyr::lag(fx_volatility,1) +dplyr::lag(fx_volatility,2) +dplyr::lag(fx_volatility,3))/3,
     lag_nominal_rate_mean = (dplyr::lag(nominal_rate,1)+dplyr::lag(nominal_rate,2)+dplyr::lag(nominal_rate,3))/3,
@@ -473,8 +455,7 @@ panel_dataset <- pdata.frame(data, index = c("country", "year"))
 
 # Panel dataset for AM 
 panel_dataset <- panel_dataset %>% 
-  filter(develop == "AM",
-         country != "United States")
+  filter(develop == "AM")
 
 panel_dataset <- panel_dataset %>% 
   group_by(country) %>% 
@@ -494,11 +475,6 @@ panel_dataset_lags <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -521,11 +497,6 @@ panel_dataset_lags_2 <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -548,12 +519,7 @@ panel_dataset_lags_2 <- panel_dataset %>%
 panel_dataset_lags_3 <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -577,11 +543,6 @@ panel_dataset_mean_lags <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_mean = (dplyr::lag(GDP_growth,1) + dplyr::lag(GDP_growth,2) + dplyr::lag(GDP_growth,3))/3, 
     lag_fx_volatility_mean = (dplyr::lag(fx_volatility,1) +dplyr::lag(fx_volatility,2) +dplyr::lag(fx_volatility,3))/3,
     lag_nominal_rate_mean = (dplyr::lag(nominal_rate,1)+dplyr::lag(nominal_rate,2)+dplyr::lag(nominal_rate,3))/3,
@@ -930,8 +891,7 @@ panel_dataset <- pdata.frame(data, index = c("country", "year"))
 
 # Panel dataset for EM 
 panel_dataset <- panel_dataset %>% 
-  filter(develop == "EM",
-         country != "United States")
+  filter(develop == "EM")
 
 panel_dataset <- panel_dataset %>% 
   group_by(country) %>% 
@@ -950,12 +910,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset_lags <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -977,12 +932,7 @@ panel_dataset_lags <- panel_dataset %>%
 panel_dataset_lags_2 <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -1005,12 +955,7 @@ panel_dataset_lags_2 <- panel_dataset %>%
 panel_dataset_lags_3 <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+  
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -1034,11 +979,6 @@ panel_dataset_mean_lags <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_mean = (dplyr::lag(GDP_growth,1) + dplyr::lag(GDP_growth,2) + dplyr::lag(GDP_growth,3))/3, 
     lag_fx_volatility_mean = (dplyr::lag(fx_volatility,1) +dplyr::lag(fx_volatility,2) +dplyr::lag(fx_volatility,3))/3,
     lag_nominal_rate_mean = (dplyr::lag(nominal_rate,1)+dplyr::lag(nominal_rate,2)+dplyr::lag(nominal_rate,3))/3,
@@ -1399,12 +1339,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -1426,12 +1361,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
-    
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
+  
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -1455,11 +1385,6 @@ panel_dataset <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -1483,11 +1408,6 @@ panel_dataset <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
     
-    # Adding GDP Growth
-    GDP_growth = 100*(GDP_cur - dplyr::lag(GDP_cur,1))/dplyr::lag(GDP_cur,1),
-    # Adding foreign debt to GDP
-    foreign_debt_to_gdp = foreign_debt / GDP_cur,
-    # Lags
     lag_GDP_growth_mean = (dplyr::lag(GDP_growth,1) + dplyr::lag(GDP_growth,2) + dplyr::lag(GDP_growth,3))/3, 
     lag_fx_volatility_mean = (dplyr::lag(fx_volatility,1) +dplyr::lag(fx_volatility,2) +dplyr::lag(fx_volatility,3))/3,
     lag_nominal_rate_mean = (dplyr::lag(nominal_rate,1)+dplyr::lag(nominal_rate,2)+dplyr::lag(nominal_rate,3))/3,
