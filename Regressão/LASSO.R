@@ -147,7 +147,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1, lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -162,29 +162,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_0 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_0_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table0 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table0) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_0_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table0_ = as.data.frame(as.matrix(coef(best_model_)))
-table0 <- cbind(table0, "lambda = 0.1" = table0_$s0)
-
-table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_)
+table0_se = as.data.frame(as.matrix(coef(se_model)))
+table0 <- cbind(table0, "new column" = table0_se$s0)
+colnames(table0) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_se)
 rownames(table0)[15] <- c("MSE")
 View(table0)
 
@@ -207,7 +208,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1, lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -222,32 +223,32 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_1 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_1_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table1 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table1) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_1_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table1_ = as.data.frame(as.matrix(coef(best_model_)))
-table1 <- cbind(table1, "lambda = 0.1" = table1_$s0)
-
-table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_)
+table1_se = as.data.frame(as.matrix(coef(se_model)))
+table1 <- cbind(table1, "new column" = table1_se$s0)
+colnames(table1) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_se)
 rownames(table1)[15] <- c("MSE")
 View(table1)
-
 # Lag 2 -------------------------------------------------------------------
 
 # Identifying the variables
@@ -267,7 +268,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -282,29 +283,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_2 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_2_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table2 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table2) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_2_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table2_ = as.data.frame(as.matrix(coef(best_model_)))
-table2 <- cbind(table2, "lambda = 0.1" = table2_$s0)
-
-table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_)
+table2_se = as.data.frame(as.matrix(coef(se_model)))
+table2 <- cbind(table2, "new column" = table2_se$s0)
+colnames(table2) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_se)
 rownames(table2)[15] <- c("MSE")
 View(table2)
 
@@ -327,7 +329,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -342,29 +344,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_3 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_3_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table3 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table3) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_3_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table3_ = as.data.frame(as.matrix(coef(best_model_)))
-table3 <- cbind(table3, "lambda = 0.1" = table3_$s0)
-
-table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_)
+table3_se = as.data.frame(as.matrix(coef(se_model)))
+table3 <- cbind(table3, "new column" = table0_se$s0)
+colnames(table3) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_se)
 rownames(table3)[15] <- c("MSE")
 View(table3)
 
@@ -387,7 +390,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -402,29 +405,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_mean <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_mean_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table_mean <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_mean_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table_mean_ = as.data.frame(as.matrix(coef(best_model_)))
-table_mean <- cbind(table_mean, "lambda = 0.1" = table_mean_$s0)
-
-table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_)
+table_mean_se = as.data.frame(as.matrix(coef(se_model)))
+table_mean <- cbind(table_mean, "new column" = table_mean_se$s0)
+colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_se)
 rownames(table_mean)[15] <- c("MSE")
 View(table_mean)
 
@@ -432,9 +436,9 @@ View(table_mean)
 
 MSE_RMSE_AMEM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                             MSE_best = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
-                            MSE_0.1 = c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_),
+                            MSE_1se = c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se),
                             RMSE_best = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)),
-                            RMSE_0.1 = sqrt(c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_)))
+                            RMSE_1se = sqrt(c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se)))
 
 ### Interpretability x predictive power
 
@@ -584,7 +588,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -599,29 +603,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_0 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_0_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table0 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table0) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_0_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table0_ = as.data.frame(as.matrix(coef(best_model_)))
-table0 <- cbind(table0, "lambda = 0.1" = table0_$s0)
-
-table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_)
+table0_se = as.data.frame(as.matrix(coef(se_model)))
+table0 <- cbind(table0, "new column" = table0_se$s0)
+colnames(table0) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_se)
 rownames(table0)[15] <- c("MSE")
 View(table0)
 
@@ -644,7 +649,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -659,29 +664,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_1 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_1_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table1 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table1) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_1_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table1_ = as.data.frame(as.matrix(coef(best_model_)))
-table1 <- cbind(table1, "lambda = 0.1" = table1_$s0)
-
-table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_)
+table1_se = as.data.frame(as.matrix(coef(se_model)))
+table1 <- cbind(table1, "new column" = table1_se$s0)
+colnames(table1) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_se)
 rownames(table1)[15] <- c("MSE")
 View(table1)
 
@@ -704,7 +710,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -719,29 +725,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_2 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_2_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table2 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table2) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_2_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table2_ = as.data.frame(as.matrix(coef(best_model_)))
-table2 <- cbind(table2, "lambda = 0.1" = table2_$s0)
-
-table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_)
+table2_se = as.data.frame(as.matrix(coef(se_model)))
+table2 <- cbind(table2, "new column" = table2_se$s0)
+colnames(table2) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_se)
 rownames(table2)[15] <- c("MSE")
 View(table2)
 
@@ -764,7 +771,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -779,29 +786,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_3 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_3_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table3 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table3) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_3_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table3_ = as.data.frame(as.matrix(coef(best_model_)))
-table3 <- cbind(table3, "lambda = 0.1" = table3_$s0)
-
-table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_)
+table3_se = as.data.frame(as.matrix(coef(se_model)))
+table3 <- cbind(table3, "new column" = table0_se$s0)
+colnames(table3) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_se)
 rownames(table3)[15] <- c("MSE")
 View(table3)
 
@@ -824,7 +832,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -839,39 +847,41 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_mean <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_mean_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table_mean <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_mean_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table_mean_ = as.data.frame(as.matrix(coef(best_model_)))
-table_mean <- cbind(table_mean, "lambda = 0.1" = table_mean_$s0)
-
-table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_)
+table_mean_se = as.data.frame(as.matrix(coef(se_model)))
+table_mean <- cbind(table_mean, "new column" = table_mean_se$s0)
+colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_se)
 rownames(table_mean)[15] <- c("MSE")
 View(table_mean)
+
 
 # MSE and RMSE of each lag ------------------------------------------------
 
 MSE_RMSE_AM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                           MSE_best = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
-                          MSE_0.1 = c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_),
+                          MSE_1se = c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se),
                           RMSE_best = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)),
-                          RMSE_0.1 = sqrt(c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_)))
+                          RMSE_se = sqrt(c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se)))
 
 ### Interpretability x predictive power
 
@@ -1020,7 +1030,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1035,29 +1045,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_0 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_0_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table0 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table0) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_0_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table0_ = as.data.frame(as.matrix(coef(best_model_)))
-table0 <- cbind(table0, "lambda = 0.1" = table0_$s0)
-
-table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_)
+table0_se = as.data.frame(as.matrix(coef(se_model)))
+table0 <- cbind(table0, "new column" = table0_se$s0)
+colnames(table0) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table0[nrow(table0) + 1,] = c(MSE_lasso_0, MSE_lasso_0_se)
 rownames(table0)[15] <- c("MSE")
 View(table0)
 
@@ -1080,7 +1091,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1095,29 +1106,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_1 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_1_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table1 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table1) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_1_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table1_ = as.data.frame(as.matrix(coef(best_model_)))
-table1 <- cbind(table1, "lambda = 0.1" = table1_$s0)
-
-table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_)
+table1_se = as.data.frame(as.matrix(coef(se_model)))
+table1 <- cbind(table1, "new column" = table1_se$s0)
+colnames(table1) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_se)
 rownames(table1)[15] <- c("MSE")
 View(table1)
 
@@ -1140,7 +1152,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1155,29 +1167,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_2 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_2_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table2 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table2) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_2_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table2_ = as.data.frame(as.matrix(coef(best_model_)))
-table2 <- cbind(table2, "lambda = 0.1" = table2_$s0)
-
-table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_)
+table2_se = as.data.frame(as.matrix(coef(se_model)))
+table2 <- cbind(table2, "new column" = table2_se$s0)
+colnames(table2) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table2[nrow(table2) + 1,] = c(MSE_lasso_2, MSE_lasso_2_se)
 rownames(table2)[15] <- c("MSE")
 View(table2)
 
@@ -1200,7 +1213,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1215,29 +1228,30 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_3 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_3_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table3 <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table3) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_3_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table3_ = as.data.frame(as.matrix(coef(best_model_)))
-table3 <- cbind(table3, "lambda = 0.1" = table3_$s0)
-
-table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_)
+table3_se = as.data.frame(as.matrix(coef(se_model)))
+table3 <- cbind(table3, "new column" = table0_se$s0)
+colnames(table3) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table3[nrow(table3) + 1,] = c(MSE_lasso_3, MSE_lasso_3_se)
 rownames(table3)[15] <- c("MSE")
 View(table3)
 
@@ -1260,7 +1274,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1275,39 +1289,41 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso_mean <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_mean_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table_mean <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_mean_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table_mean_ = as.data.frame(as.matrix(coef(best_model_)))
-table_mean <- cbind(table_mean, "lambda = 0.1" = table_mean_$s0)
-
-table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_)
+table_mean_se = as.data.frame(as.matrix(coef(se_model)))
+table_mean <- cbind(table_mean, "new column" = table_mean_se$s0)
+colnames(table_mean) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table_mean[nrow(table_mean) + 1,] = c(MSE_lasso_mean, MSE_lasso_mean_se)
 rownames(table_mean)[15] <- c("MSE")
 View(table_mean)
+
 
 # MSE and RMSE of each lag ------------------------------------------------
 
 MSE_RMSE_EM <- data.frame(row.names = c("Lag_0", "Lag_1", "Lag_2", "Lag_3", "mean"),
                           MSE_best = c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean),
-                          MSE_0.1 = c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_),
+                          MSE_1se = c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se),
                           RMSE_best = sqrt(c(MSE_lasso_0, MSE_lasso_1, MSE_lasso_2, MSE_lasso_3, MSE_lasso_mean)),
-                          RMSE_0.1 = sqrt(c(MSE_lasso_0_, MSE_lasso_1_, MSE_lasso_2_, MSE_lasso_3_, MSE_lasso_mean_)))
+                          RMSE_1se = sqrt(c(MSE_lasso_0_se, MSE_lasso_1_se, MSE_lasso_2_se, MSE_lasso_3_se, MSE_lasso_mean_se)))
 
 ### Interpretability x predictive power
 
@@ -1447,7 +1463,7 @@ y <- scale(y)
 
 set.seed(1234)
 
-cv_model <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = lambda.array)
+cv_model <- cv.glmnet(x, y, alpha = 1,  lambda = lambda.array)
 
 ### Find optimal lambda value that minimizes test MSE
 
@@ -1462,39 +1478,41 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
-### Mean squared error (MSE)
+### Best lambda mean squared error (MSE)
 
 MSE_lasso <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
 
-# Comparing coefficients and MSE of lambda = best_lambda and 0.1
+### Find optimal lambda plus 1se
+
+se_lambda <- cv_model$lambda.1se
+se_lambda
+
+### 1se model coefficients
+
+se_model <- glmnet(x, y, alpha = 1, lambda = se_lambda)
+
+### 1se lambda mean squared error (MSE)
+
+MSE_lasso_se <- cv_model$cvm[cv_model$lambda == cv_model$lambda.1se]
+
+# Comparing coefficients and MSE of lambda = best_lambda and lambda + 1se
 
 table <- as.data.frame(as.matrix(coef(best_model)))
-colnames(table) <- c(sprintf("best lambda = %s", best_lambda))
-
-## lambda = 0.1
-
-set.seed(1234)
-cv_model_ <- cv.glmnet(x, y, alpha = 1, nfolds = 5, lambda = seq(from = 0.1, to = 1, by = 0.0001))
-best_lambda_ <- cv_model_$lambda.min
-best_model_ <- glmnet(x, y, alpha = 1, lambda = best_lambda_)
-MSE_lasso_ <- cv_model_$cvm[cv_model_$lambda == cv_model_$lambda.min]
-
-## Adjusting data
-
-table_ = as.data.frame(as.matrix(coef(best_model_)))
-table <- cbind(table, "lambda = 0.1" = table_$s0)
-
-table[nrow(table) + 1,] = c(MSE_lasso_, MSE_lasso_)
+table_se = as.data.frame(as.matrix(coef(se_model)))
+table <- cbind(table, "new column" = table_se$s0)
+colnames(table) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
+table[nrow(table) + 1,] = c(MSE_lasso, MSE_lasso_se)
 rownames(table)[15] <- c("MSE")
 View(table)
+
 
 # MSE and RMSE of each lag ------------------------------------------------
 
 MSE_RMSE_DP <- data.frame(row.names = c("Dynamic Panel"),
                           MSE_best = c(MSE_lasso),
-                          MSE_0.1 = c(MSE_lasso_),
+                          MSE_1se = c(MSE_lasso_se),
                           RMSE_best = sqrt(c(MSE_lasso)),
-                          RMSE_0.1 = sqrt(c(MSE_lasso_)))
+                          RMSE_se = sqrt(c(MSE_lasso_se)))
 
 ### Interpretability x predictive power
 
