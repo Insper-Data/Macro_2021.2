@@ -150,11 +150,10 @@ stargazer(reg1.lag_0,
           reg2.lag_0, 
           reg3.lag_0, 
           reg4.lag_0,
-          title = "Painel sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis sem Lag", type = "text", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_0_c, reg2.lag_0_c, reg3.lag_0_c, reg4.lag_0_c),
           omit.stat = "f",
-          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
           dep.var.labels = c("Spreads de títulos de 10 anos"))
 
 
@@ -183,11 +182,10 @@ stargazer(reg1.lag_1,
           reg2.lag_1, 
           reg3.lag_1, 
           reg4.lag_1,
-          title = "Painel sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis com 1 Lag", type = "text", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_1_c, reg2.lag_1_c, reg3.lag_1_c, reg4.lag_1_c),
           omit.stat = "f",
-          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
           dep.var.labels = c("Spreads de títulos de 10 anos"))
 
 
@@ -216,11 +214,10 @@ stargazer(reg1.lag_2,
           reg2.lag_2, 
           reg3.lag_2, 
           reg4.lag_2,
-          title = "Painel sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis com 2 Lags", type = "text", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_2_c, reg2.lag_2_c, reg3.lag_2_c, reg4.lag_2_c),
           omit.stat = "f",
-          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
           dep.var.labels = c("Spreads de títulos de 10 anos"))
 
 #--------------------------------------------------------------------------------------------
@@ -248,11 +245,10 @@ stargazer(reg1.lag_3,
           reg2.lag_3, 
           reg3.lag_3, 
           reg4.lag_3,
-          title = "Painel sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis com 3 Lags", type = "text", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_3_c, reg2.lag_3_c, reg3.lag_3_c, reg4.lag_3_c),
           omit.stat = "f",
-          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
           dep.var.labels = c("Spreads de títulos de 10 anos"))
 
 #--------------------------------------------------------------------------------------------
@@ -280,10 +276,10 @@ stargazer(reg1.lag_mean,
           reg2.lag_mean, 
           reg3.lag_mean, 
           reg4.lag_mean,
-          title = "Painel sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis com a média dos Lags", type = "text", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
           omit.stat = "f",
-          covariate.labels = c("Volatilidade do Câmbio", "Taxa de juros Nominal", "Impostos", "Conta Corrente", "Taxa de juros de empréstimos bancários", "Desemprego", "Inflação média", "Dívida/PIB", "Taxa de juros real", "Ep", "Sp", "Gp", "vix_EUA"),
-          dep.var.labels = c("Spreads de títulos de 10 anos"))
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out="mean.htm")
 
