@@ -50,6 +50,7 @@ panel_dataset_lags <- panel_dataset %>%
     lag_Ep_1 = dplyr::lag(Ep,1),
     lag_Sp_1 = dplyr::lag(Sp,1),
     lag_Gp_1 = dplyr::lag(Gp,1),
+    lag_ESGIp_1 = dplyr::lag(ESGIp, 1),
     lag_foreign_debt_to_gdp_1 = dplyr::lag(foreign_debt_to_gdp, 1),
     lag_vix_EUA_1 = dplyr::lag(vix_EUA, 1))
 
@@ -73,6 +74,7 @@ panel_dataset_lags_2 <- panel_dataset %>%
     lag_Ep_2 = dplyr::lag(Ep,2),
     lag_Sp_2 = dplyr::lag(Sp,2),
     lag_Gp_2 = dplyr::lag(Gp,2),
+    lag_ESGIp_2 = dplyr::lag(ESGIp, 2),
     lag_foreign_debt_to_gdp_2 = dplyr::lag(foreign_debt_to_gdp, 2),
     lag_vix_EUA_2 = dplyr::lag(vix_EUA, 2))
 
@@ -96,6 +98,7 @@ panel_dataset_lags_3 <- panel_dataset %>%
     lag_Ep_3 = dplyr::lag(Ep,3),
     lag_Sp_3 = dplyr::lag(Sp,3),
     lag_Gp_3 = dplyr::lag(Gp,3),
+    lag_ESGIp_3 = dplyr::lag(ESGIp, 3),
     lag_foreign_debt_to_gdp_3 = dplyr::lag(foreign_debt_to_gdp, 3),
     lag_vix_EUA_3 = dplyr::lag(vix_EUA, 3))
 
@@ -118,12 +121,37 @@ panel_dataset_mean_lags <- panel_dataset %>%
     lag_Ep_mean = (dplyr::lag(Ep,1)+dplyr::lag(Ep,2)+dplyr::lag(Ep,3))/3,
     lag_Sp_mean = (dplyr::lag(Sp,1)+dplyr::lag(Sp,2)+dplyr::lag(Sp,3))/3,
     lag_Gp_mean = (dplyr::lag(Gp,1)+dplyr::lag(Gp,2)+dplyr::lag(Gp,3))/3,
+    lag_ESGIp_mean = (dplyr::lag(ESGIp, 1)+dplyr::lag(ESGIp, 2)+dplyr::lag(ESGIp))/3,
     lag_foreign_debt_to_gdp_mean = (dplyr::lag(foreign_debt_to_gdp, 1) +dplyr::lag(foreign_debt_to_gdp, 2) + dplyr::lag(foreign_debt_to_gdp, 3))/3,
     lag_vix_EUA_mean = (dplyr::lag(vix_EUA, 1) + dplyr::lag(vix_EUA, 2) + dplyr::lag(vix_EUA, 3))/ 3)
 
 
-
 # Regressions -------------------------------------------------------------
+
+formula_teste <- spreads ~ ESGIp + real_interest_rate + debt_to_GDP + inflation_mean + unemployment + lending_borroeing_rate + account_balance + taxes + vix_EUA + nominal_rate + GDP_per_cap_cur_USD + fx_volatility + GDP_growth + foreign_debt_to_gdp
+ 
+reg1.teste <- plm(formula_teste, data = panel_dataset, model = "within", effect = "individual")
+reg2.teste <- plm(formula_teste, data = panel_dataset, model = "within", effect = "time")
+reg3.teste <- plm(formula_teste, data = panel_dataset, model = "within", effect = "twoways")
+reg4.teste <- plm(formula_teste, data = panel_dataset, model = "pooling")
+
+# Clusterized errors:
+reg1.teste_c <- coeftest(reg1.teste, vcovHC(reg1.teste, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.teste_c <- coeftest(reg2.teste, vcovHC(reg2.teste, type="sss", cluster="group", method = "white2"))[,2]
+reg3.teste_c <- coeftest(reg3.teste, vcovHC(reg3.teste, type="sss", cluster="group", method = "white2"))[,2]
+reg4.teste_c <- coeftest(reg4.teste, vcovHC(reg4.teste, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.teste, 
+          reg2.teste, 
+          reg3.teste, 
+          reg4.teste,
+          title = "EF normal", type = "html", style = "default", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.teste_c, reg2.teste_c, reg3.teste_c, reg4.teste_c),
+          omit.stat = "f",
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out = "Regressão/EF_teste.htm")
 
 # Using variables and lag selected by the LASSO regression
 
@@ -131,10 +159,10 @@ panel_dataset_mean_lags <- panel_dataset %>%
 
 formula <- spreads ~ Ep + Sp + Gp
 
-reg1.esg <- plm(formula_0, data = panel_dataset, model = "within", effect = "individual")
-reg2.esg <- plm(formula_0, data = panel_dataset, model = "within", effect = "time")
-reg3.esg <- plm(formula_0, data = panel_dataset, model = "within", effect = "twoways")
-reg4.esg <- plm(formula_0, data = panel_dataset, model = "pooling")
+reg1.esg <- plm(formula, data = panel_dataset, model = "within", effect = "individual")
+reg2.esg <- plm(formula, data = panel_dataset, model = "within", effect = "time")
+reg3.esg <- plm(formula, data = panel_dataset, model = "within", effect = "twoways")
+reg4.esg <- plm(formula, data = panel_dataset, model = "pooling")
 
 # Clusterized errors:
 reg1.esg_c <- coeftest(reg1.esg, vcovHC(reg1.esg, type="sss", cluster = "group", method = "white2"))[,2]
@@ -147,15 +175,17 @@ stargazer(reg1.esg,
           reg2.esg, 
           reg3.esg, 
           reg4.esg,
-          title = "Apenas E, S, G", type = "text", style = "qje", 
+          title = "Apenas E, S, G", type = "html", style = "default", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.esg_c, reg2.esg_c, reg3.esg_c, reg4.esg_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_esg.txt")
+          out = "Regressão/EF_esg.htm")
 
 
 # Mean (best lambda) ------------------------------------------------------
+
+## E, S and G
 
 formula_mean <- spreads ~ lag_GDP_growth_mean + lag_fx_volatility_mean + lag_nominal_rate_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_Ep_mean + lag_Sp_mean + lag_Gp_mean + lag_foreign_debt_to_gdp_mean + lag_vix_EUA_mean 
 
@@ -175,17 +205,18 @@ stargazer(reg1.lag_mean,
           reg2.lag_mean, 
           reg3.lag_mean, 
           reg4.lag_mean,
-          title = "Painel Variáveis com a média dos Lags (best lambda)", type = "text", style = "qje", 
+          title = "Painel Variáveis com a média dos Lags (best lambda)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_mean_AMEM.txt")
+          out = "Regressão/EF_mean_AMEM.html")
 
+# Mean (best lambda) ------------------------------------------------------
 
-# Mean (best lambda + 1se) ------------------------------------------------
+## Only ESG
 
-formula_mean <- spreads ~ lag_nominal_rate_mean + lag_taxes_mean + lag_account_balance_mean + lag_Gp_mean 
+formula_mean <- spreads ~ lag_GDP_growth_mean + lag_fx_volatility_mean + lag_nominal_rate_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_ESGIp_mean + lag_foreign_debt_to_gdp_mean + lag_vix_EUA_mean 
 
 reg1.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "individual")
 reg2.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "time")
@@ -203,12 +234,69 @@ stargazer(reg1.lag_mean,
           reg2.lag_mean, 
           reg3.lag_mean, 
           reg4.lag_mean,
-          title = "Painel Variáveis com a média dos Lags (best lambda + 1se)", type = "text", style = "qje", 
+          title = "Painel Variáveis com a média dos Lags (best lambda)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_mean_AMEM_se.txt")
+          out = "Regressão/EF_mean_AMEM_.html")
+
+
+# Lag 0 (best lambda + 1se) ------------------------------------------------
+
+formula_0 <- spreads ~ nominal_rate + account_balance + unemployment + Gp 
+
+reg1.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "individual")
+reg2.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "time")
+reg3.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "twoways")
+reg4.lag_0 <- plm(formula_0, data = panel_dataset, model = "pooling")
+
+# Clusterized errors:
+reg1.lag_0_c <- coeftest(reg1.lag_0, vcovHC(reg1.lag_0, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_0_c <- coeftest(reg2.lag_0, vcovHC(reg2.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_0_c <- coeftest(reg3.lag_0, vcovHC(reg3.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_0_c <- coeftest(reg4.lag_0, vcovHC(reg4.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.lag_0, 
+          reg2.lag_0, 
+          reg3.lag_0, 
+          reg4.lag_0,
+          title = "Painel Variáveis sem lags (best lambda + 1se)", type = "html", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_0_c, reg2.lag_0_c, reg3.lag_0_c, reg4.lag_0_c),
+          omit.stat = "f",
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out = "Regressão/EF_0_AMEM_se.htm")
+
+# Lag 0 (best lambda + 1se) ------------------------------------------------
+
+## Only ESG
+
+formula_0 <- spreads ~ nominal_rate + account_balance + unemployment + ESGIp 
+
+reg1.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "individual")
+reg2.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "time")
+reg3.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "twoways")
+reg4.lag_0 <- plm(formula_0, data = panel_dataset, model = "pooling")
+
+# Clusterized errors:
+reg1.lag_0_c <- coeftest(reg1.lag_0, vcovHC(reg1.lag_0, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_0_c <- coeftest(reg2.lag_0, vcovHC(reg2.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_0_c <- coeftest(reg3.lag_0, vcovHC(reg3.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_0_c <- coeftest(reg4.lag_0, vcovHC(reg4.lag_0, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.lag_0, 
+          reg2.lag_0, 
+          reg3.lag_0, 
+          reg4.lag_0,
+          title = "Painel Variáveis sem lags (best lambda + 1se)", type = "html", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_0_c, reg2.lag_0_c, reg3.lag_0_c, reg4.lag_0_c),
+          omit.stat = "f",
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out = "Regressão/EF_0_AMEM_se_.htm")
 
 
 # AM ----------------------------------------------------------------------
@@ -329,91 +417,10 @@ panel_dataset_mean_lags <- panel_dataset %>%
 
 # Regressions -------------------------------------------------------------
 
+# Lag 3 (best lambda) -----------------------------------------------------
 
-# Lag 0 (no lags) ---------------------------------------------------------
+formula_3 <- spreads ~ lag_nominal_rate_3 + lag_taxes_3 + lag_account_balance_3 + lag_lending_borroeing_rate_3 + lag_Gp_3 + lag_vix_EUA_3 
 
-formula_0 <- spreads ~ fx_volatility + nominal_rate + taxes + account_balance + lending_borroeing_rate + unemployment + inflation_mean + debt_to_GDP + real_interest_rate + Ep + Sp + Gp + vix_EUA
-
-reg1.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "individual")
-reg2.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "time")
-reg3.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "twoways")
-reg4.lag_0<- plm(formula_0, data = panel_dataset, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_0_c <- coeftest(reg1.lag_0, vcovHC(reg1.lag_0, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_0_c <- coeftest(reg2.lag_0, vcovHC(reg2.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_0_c <- coeftest(reg3.lag_0, vcovHC(reg3.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_0_c <- coeftest(reg4.lag_0, vcovHC(reg4.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_0, 
-          reg2.lag_0, 
-          reg3.lag_0, 
-          reg4.lag_0,
-          title = "Painel Variáveis sem Lag", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_0_c, reg2.lag_0_c, reg3.lag_0_c, reg4.lag_0_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_0_AM.txt")
-
-# Lag 1 -------------------------------------------------------------------
-
-formula_1 <- spreads ~ lag_fx_volatility_1 + lag_nominal_rate_1 + lag_taxes_1 + lag_account_balance_1 + lag_lending_borroeing_rate_1 + lag_unemployment_1 + lag_inflation_mean_1 + lag_debt_to_GDP_1 + lag_real_interest_rate_1 + lag_Ep_1 + lag_Sp_1 + lag_Gp_1 + lag_vix_EUA_1 
-reg1.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "individual")
-reg2.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "time")
-reg3.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "twoways")
-reg4.lag_1<- plm(formula_1, data = panel_dataset_lags, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_1_c <- coeftest(reg1.lag_1, vcovHC(reg1.lag_1, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_1_c <- coeftest(reg2.lag_1, vcovHC(reg2.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_1_c <- coeftest(reg3.lag_1, vcovHC(reg3.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_1_c <- coeftest(reg4.lag_1, vcovHC(reg4.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_1, 
-          reg2.lag_1, 
-          reg3.lag_1, 
-          reg4.lag_1,
-          title = "Painel Variáveis com 1 Lag", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_1_c, reg2.lag_1_c, reg3.lag_1_c, reg4.lag_1_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_1_AM.txt")
-
-
-# Lag 2 -------------------------------------------------------------------
-
-formula_2 <- spreads ~ lag_fx_volatility_2 + lag_nominal_rate_2 + lag_taxes_2 + lag_account_balance_2 + lag_lending_borroeing_rate_2 + lag_unemployment_2 + lag_inflation_mean_2 + lag_debt_to_GDP_2 + lag_real_interest_rate_2 + lag_Ep_2 + lag_Sp_2 + lag_Gp_2 + lag_vix_EUA_2 
-reg1.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "individual")
-reg2.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "time")
-reg3.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "twoways")
-reg4.lag_2<- plm(formula_2, data = panel_dataset_lags_2, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_2_c <- coeftest(reg1.lag_2, vcovHC(reg1.lag_2, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_2_c <- coeftest(reg2.lag_2, vcovHC(reg2.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_2_c <- coeftest(reg3.lag_2, vcovHC(reg3.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_2_c <- coeftest(reg4.lag_2, vcovHC(reg4.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_2, 
-          reg2.lag_2, 
-          reg3.lag_2, 
-          reg4.lag_2,
-          title = "Painel Variáveis com 2 Lags", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_2_c, reg2.lag_2_c, reg3.lag_2_c, reg4.lag_2_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_2_AM.txt")
-
-
-# Lag 3 -------------------------------------------------------------------
-
-formula_3 <- spreads ~ lag_fx_volatility_3 + lag_nominal_rate_3 + lag_taxes_3 + lag_account_balance_3 + lag_lending_borroeing_rate_3 + lag_unemployment_3 + lag_inflation_mean_3 + lag_debt_to_GDP_3 + lag_real_interest_rate_3 + lag_Ep_3 + lag_Sp_3 + lag_Gp_3 + lag_vix_EUA_3 
 reg1.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "individual")
 reg2.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "time")
 reg3.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "twoways")
@@ -430,40 +437,40 @@ stargazer(reg1.lag_3,
           reg2.lag_3, 
           reg3.lag_3, 
           reg4.lag_3,
-          title = "Painel Variáveis com 3 Lags", type = "text", style = "qje", 
+          title = "Painel Variáveis com 3 Lags (best lambda)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_3_c, reg2.lag_3_c, reg3.lag_3_c, reg4.lag_3_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_3_AM.txt")
+          out = "Regressão/EF_3_AM.htm")
 
 
-# Mean --------------------------------------------------------------------
+# Lag 3 (best lambda + 1se) -----------------------------------------------
 
-formula_mean <- spreads ~ lag_fx_volatility_mean + lag_nominal_rate_mean + lag_taxes_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_real_interest_rate_mean + lag_Ep_mean + lag_Sp_mean + lag_Gp_mean + lag_vix_EUA_mean 
+formula_3 <- spreads ~ lag_unemployment_3 + lag_Gp_3 
 
-reg1.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "individual")
-reg2.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "time")
-reg3.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "twoways")
-reg4.lag_mean<- plm(formula_mean, data = panel_dataset_mean_lags, model = "pooling")
+reg1.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "individual")
+reg2.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "time")
+reg3.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "twoways")
+reg4.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "pooling")
 
 # Clusterized errors:
-reg1.lag_mean_c <- coeftest(reg1.lag_mean, vcovHC(reg1.lag_mean, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_mean_c <- coeftest(reg2.lag_mean, vcovHC(reg2.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_mean_c <- coeftest(reg3.lag_mean, vcovHC(reg3.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_mean_c <- coeftest(reg4.lag_mean, vcovHC(reg4.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
+reg1.lag_3_c <- coeftest(reg1.lag_3, vcovHC(reg1.lag_3, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_3_c <- coeftest(reg2.lag_3, vcovHC(reg2.lag_3, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_3_c <- coeftest(reg3.lag_3, vcovHC(reg3.lag_3, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_3_c <- coeftest(reg4.lag_3, vcovHC(reg4.lag_3, type="sss", cluster="group", method = "white2"))[,2]
 
 # Output for LaTeX:
-stargazer(reg1.lag_mean, 
-          reg2.lag_mean, 
-          reg3.lag_mean, 
-          reg4.lag_mean,
-          title = "Painel Variáveis com a média dos Lags", type = "text", style = "qje", 
+stargazer(reg1.lag_3, 
+          reg2.lag_3, 
+          reg3.lag_3, 
+          reg4.lag_3,
+          title = "Painel Variáveis com 3 lags (best lambda + 1se)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
+          se = list(reg1.lag_3_c, reg2.lag_3_c, reg3.lag_3_c, reg4.lag_3_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_mean_AM.txt")
+          out = "Regressão/EF_3_AM_se.htm")
 
 
 # EM ----------------------------------------------------------------------
@@ -584,117 +591,9 @@ panel_dataset_mean_lags <- panel_dataset %>%
 
 # Regressions -------------------------------------------------------------
 
-# Lag 0 (no lags) ---------------------------------------------------------
+# Mean (best lambda) ------------------------------------------------------
 
-formula_0 <- spreads ~ fx_volatility + nominal_rate + taxes + account_balance + lending_borroeing_rate + unemployment + inflation_mean + debt_to_GDP + real_interest_rate + Ep + Sp + Gp + vix_EUA
-
-reg1.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "individual")
-reg2.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "time")
-reg3.lag_0 <- plm(formula_0, data = panel_dataset, model = "within", effect = "twoways")
-reg4.lag_0<- plm(formula_0, data = panel_dataset, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_0_c <- coeftest(reg1.lag_0, vcovHC(reg1.lag_0, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_0_c <- coeftest(reg2.lag_0, vcovHC(reg2.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_0_c <- coeftest(reg3.lag_0, vcovHC(reg3.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_0_c <- coeftest(reg4.lag_0, vcovHC(reg4.lag_0, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_0, 
-          reg2.lag_0, 
-          reg3.lag_0, 
-          reg4.lag_0,
-          title = "Painel Variáveis sem Lag", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_0_c, reg2.lag_0_c, reg3.lag_0_c, reg4.lag_0_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_0_EM.txt")
-
-# Lag 1 -------------------------------------------------------------------
-
-formula_1 <- spreads ~ lag_fx_volatility_1 + lag_nominal_rate_1 + lag_taxes_1 + lag_account_balance_1 + lag_lending_borroeing_rate_1 + lag_unemployment_1 + lag_inflation_mean_1 + lag_debt_to_GDP_1 + lag_real_interest_rate_1 + lag_Ep_1 + lag_Sp_1 + lag_Gp_1 + lag_vix_EUA_1 
-reg1.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "individual")
-reg2.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "time")
-reg3.lag_1 <- plm(formula_1, data = panel_dataset_lags, model = "within", effect = "twoways")
-reg4.lag_1<- plm(formula_1, data = panel_dataset_lags, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_1_c <- coeftest(reg1.lag_1, vcovHC(reg1.lag_1, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_1_c <- coeftest(reg2.lag_1, vcovHC(reg2.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_1_c <- coeftest(reg3.lag_1, vcovHC(reg3.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_1_c <- coeftest(reg4.lag_1, vcovHC(reg4.lag_1, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_1, 
-          reg2.lag_1, 
-          reg3.lag_1, 
-          reg4.lag_1,
-          title = "Painel Variáveis com 1 Lag", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_1_c, reg2.lag_1_c, reg3.lag_1_c, reg4.lag_1_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_1_EM.txt")
-
-
-# Lag 2 -------------------------------------------------------------------
-
-formula_2 <- spreads ~ lag_fx_volatility_2 + lag_nominal_rate_2 + lag_taxes_2 + lag_account_balance_2 + lag_lending_borroeing_rate_2 + lag_unemployment_2 + lag_inflation_mean_2 + lag_debt_to_GDP_2 + lag_real_interest_rate_2 + lag_Ep_2 + lag_Sp_2 + lag_Gp_2 + lag_vix_EUA_2 
-reg1.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "individual")
-reg2.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "time")
-reg3.lag_2 <- plm(formula_2, data = panel_dataset_lags_2, model = "within", effect = "twoways")
-reg4.lag_2<- plm(formula_2, data = panel_dataset_lags_2, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_2_c <- coeftest(reg1.lag_2, vcovHC(reg1.lag_2, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_2_c <- coeftest(reg2.lag_2, vcovHC(reg2.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_2_c <- coeftest(reg3.lag_2, vcovHC(reg3.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_2_c <- coeftest(reg4.lag_2, vcovHC(reg4.lag_2, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_2, 
-          reg2.lag_2, 
-          reg3.lag_2, 
-          reg4.lag_2,
-          title = "Painel Variáveis com 2 Lags", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_2_c, reg2.lag_2_c, reg3.lag_2_c, reg4.lag_2_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_2_EM.txt")
-
-
-# Lag 3 -------------------------------------------------------------------
-
-formula_3 <- spreads ~ lag_fx_volatility_3 + lag_nominal_rate_3 + lag_taxes_3 + lag_account_balance_3 + lag_lending_borroeing_rate_3 + lag_unemployment_3 + lag_inflation_mean_3 + lag_debt_to_GDP_3 + lag_real_interest_rate_3 + lag_Ep_3 + lag_Sp_3 + lag_Gp_3 + lag_vix_EUA_3 
-reg1.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "individual")
-reg2.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "time")
-reg3.lag_3 <- plm(formula_3, data = panel_dataset_lags_3, model = "within", effect = "twoways")
-reg4.lag_3<- plm(formula_3, data = panel_dataset_lags_3, model = "pooling")
-
-# Clusterized errors:
-reg1.lag_3_c <- coeftest(reg1.lag_3, vcovHC(reg1.lag_3, type="sss", cluster = "group", method = "white2"))[,2]
-reg2.lag_3_c <- coeftest(reg2.lag_3, vcovHC(reg1.lag_3, type="sss", cluster="group", method = "white2"))[,2]
-reg3.lag_3_c <- coeftest(reg3.lag_3, vcovHC(reg3.lag_3, type="sss", cluster="group", method = "white2"))[,2]
-reg4.lag_3_c <- coeftest(reg4.lag_3, vcovHC(reg4.lag_3, type="sss", cluster="group", method = "white2"))[,2]
-
-# Output for LaTeX:
-stargazer(reg1.lag_3, 
-          reg2.lag_3, 
-          reg3.lag_3, 
-          reg4.lag_3,
-          title = "Painel Variáveis com 3 Lags", type = "text", style = "qje", 
-          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
-          se = list(reg1.lag_3_c, reg2.lag_3_c, reg3.lag_3_c, reg4.lag_3_c),
-          omit.stat = "f",
-          dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_3_EM.txt")
-
-
-# Mean --------------------------------------------------------------------
-
-formula_mean <- spreads ~ lag_fx_volatility_mean + lag_nominal_rate_mean + lag_taxes_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_real_interest_rate_mean + lag_Ep_mean + lag_Sp_mean + lag_Gp_mean + lag_vix_EUA_mean 
+formula_mean <- spreads ~ lag_GDP_growth_mean + lag_fx_volatility_mean + lag_nominal_rate_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_Ep_mean + lag_Sp_mean + lag_Gp_mean + lag_foreign_debt_to_gdp_mean + lag_vix_EUA_mean 
 
 reg1.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "individual")
 reg2.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "time")
@@ -712,13 +611,39 @@ stargazer(reg1.lag_mean,
           reg2.lag_mean, 
           reg3.lag_mean, 
           reg4.lag_mean,
-          title = "Painel Variáveis com a média dos Lags", type = "text", style = "qje", 
+          title = "Painel Variáveis com a média dos Lags (best lambda)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_mean_EM.txt")
+          out = "Regressão/EF_mean_EM.htm")
 
+# Mean (best lambda + 1se) ------------------------------------------------
+
+formula_mean <- spreads ~ lag_GDP_growth_mean + lag_nominal_rate_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_Ep_mean + lag_Sp_mean  + lag_foreign_debt_to_gdp_mean  
+
+reg1.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "individual")
+reg2.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "time")
+reg3.lag_mean <- plm(formula_mean, data = panel_dataset_mean_lags, model = "within", effect = "twoways")
+reg4.lag_mean<- plm(formula_mean, data = panel_dataset_mean_lags, model = "pooling")
+
+# Clusterized errors:
+reg1.lag_mean_c <- coeftest(reg1.lag_mean, vcovHC(reg1.lag_mean, type="sss", cluster = "group", method = "white2"))[,2]
+reg2.lag_mean_c <- coeftest(reg2.lag_mean, vcovHC(reg2.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
+reg3.lag_mean_c <- coeftest(reg3.lag_mean, vcovHC(reg3.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
+reg4.lag_mean_c <- coeftest(reg4.lag_mean, vcovHC(reg4.lag_mean, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1.lag_mean, 
+          reg2.lag_mean, 
+          reg3.lag_mean, 
+          reg4.lag_mean,
+          title = "Painel Variáveis com a média dos Lags (best lambda + 1se)", type = "html", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1.lag_mean_c, reg2.lag_mean_c, reg3.lag_mean_c, reg4.lag_mean_c),
+          omit.stat = "f",
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out = "Regressão/EF_mean_EM_se.htm")
 
 # Dynamic Panel -----------------------------------------------------------
 
@@ -833,7 +758,9 @@ panel_dataset <- panel_dataset %>%
 
 # Regression -------------------------------------------------------------
 
-formula <- spreads ~ fx_volatility + nominal_rate + taxes + account_balance + lending_borroeing_rate + unemployment + inflation_mean + debt_to_GDP + real_interest_rate + Ep + Sp + Gp + vix_EUA + lag_fx_volatility_1 + lag_nominal_rate_1 + lag_taxes_1 + lag_account_balance_1 + lag_lending_borroeing_rate_1 + lag_unemployment_1 + lag_inflation_mean_1 + lag_debt_to_GDP_1 + lag_real_interest_rate_1 + lag_Ep_1 + lag_Sp_1 + lag_Gp_1 + lag_vix_EUA_1 + lag_fx_volatility_2 + lag_nominal_rate_2 + lag_taxes_2 + lag_account_balance_2 + lag_lending_borroeing_rate_2 + lag_unemployment_2 + lag_inflation_mean_2 + lag_debt_to_GDP_2 + lag_real_interest_rate_2 + lag_Ep_2 + lag_Sp_2 + lag_Gp_2 + lag_vix_EUA_2 + lag_fx_volatility_3 + lag_nominal_rate_3 + lag_taxes_3 + lag_account_balance_3 + lag_lending_borroeing_rate_3 + lag_unemployment_3 + lag_inflation_mean_3 + lag_debt_to_GDP_3 + lag_real_interest_rate_3 + lag_Ep_3 + lag_Sp_3 + lag_Gp_3 + lag_vix_EUA_3 + lag_fx_volatility_mean + lag_nominal_rate_mean + lag_taxes_mean + lag_account_balance_mean + lag_lending_borroeing_rate_mean + lag_unemployment_mean + lag_inflation_mean_mean + lag_debt_to_GDP_mean + lag_real_interest_rate_mean + lag_Ep_mean + lag_Sp_mean + lag_Gp_mean + lag_vix_EUA_mean
+# Best lambda -------------------------------------------------------------
+
+formula <- spreads ~ GDP_growth + fx_volatility + GDP_per_cap_cur_USD + nominal_rate + unemployment + inflation_mean + debt_to_GDP + Gp + foreign_debt_to_gdp	+ vix_EUA + lag_GDP_growth_1 + lag_account_balance_1 + lag_lending_borroeing_rate_1 + lag_Ep_1 + lag_vix_EUA_1 + lag_fx_volatility_2	+ lag_lending_borroeing_rate_2 + lag_unemployment_2 + lag_inflation_mean_2 + lag_vix_EUA_2 + lag_fx_volatility_3 + lag_nominal_rate_3 + lag_account_balance_3 + lag_inflation_mean_3 + lag_Sp_3 + lag_vix_EUA_3 + lag_GDP_growth_mean
 
 reg1 <- plm(formula, data = panel_dataset, model = "within", effect = "individual")
 reg2 <- plm(formula, data = panel_dataset, model = "within", effect = "time")
@@ -851,9 +778,37 @@ stargazer(reg1,
           reg2, 
           reg3, 
           reg4,
-          title = "Painel Variáveis sem Lag", type = "text", style = "qje", 
+          title = "Painel Variáveis Dinâmico (best lambda)", type = "html", style = "qje", 
           add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
           se = list(reg1._c, reg2._c, reg3._c, reg4._c),
           omit.stat = "f",
           dep.var.labels = c("Spreads de títulos de 10 anos"),
-          out = "Regressão/EF_dynamic.txt")
+          out = "Regressão/EF_dynamic.htm")
+
+
+# Best lambda + 1se -------------------------------------------------------
+
+formula <- spreads ~ nominal_rate + unemployment + Gp + lag_nominal_rate_3 + lag_account_balance_3
+
+reg1 <- plm(formula, data = panel_dataset, model = "within", effect = "individual")
+reg2 <- plm(formula, data = panel_dataset, model = "within", effect = "time")
+reg3 <- plm(formula, data = panel_dataset, model = "within", effect = "twoways")
+reg4 <- plm(formula, data = panel_dataset, model = "pooling")
+
+# Clusterized errors:
+reg1._c <- coeftest(reg1, vcovHC(reg1, type="sss", cluster = "group", method = "white2"))[,2]
+reg2._c <- coeftest(reg2, vcovHC(reg2, type="sss", cluster="group", method = "white2"))[,2]
+reg3._c <- coeftest(reg3, vcovHC(reg3, type="sss", cluster="group", method = "white2"))[,2]
+reg4._c <- coeftest(reg4, vcovHC(reg4, type="sss", cluster="group", method = "white2"))[,2]
+
+# Output for LaTeX:
+stargazer(reg1, 
+          reg2, 
+          reg3, 
+          reg4,
+          title = "Painel Variáveis Dinâmic (best lambda + 1se)", type = "html", style = "qje", 
+          add.lines = list(c("Country FE", "Yes", "No", "Yes", "No"), c("Year FE", "No", "Yes", "Yes", "No")),
+          se = list(reg1._c, reg2._c, reg3._c, reg4._c),
+          omit.stat = "f",
+          dep.var.labels = c("Spreads de títulos de 10 anos"),
+          out = "Regressão/EF_dynamic_se.htm")

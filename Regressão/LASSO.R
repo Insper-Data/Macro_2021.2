@@ -162,6 +162,11 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
+### Coefficients
+
+model_plot <- glmnet(x, y, alpha = 1)
+plot(model_plot, xvar = "lambda", label = T)
+
 ### Best lambda mean squared error (MSE)
 
 MSE_lasso_0 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
@@ -223,6 +228,11 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
+### Coefficients
+
+model_plot <- glmnet(x, y, alpha = 1)
+plot(model_plot, xvar = "lambda", label = T)
+
 ### Best lambda mean squared error (MSE)
 
 MSE_lasso_1 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
@@ -249,6 +259,7 @@ colnames(table1) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best la
 table1[nrow(table1) + 1,] = c(MSE_lasso_1, MSE_lasso_1_se)
 rownames(table1)[15] <- c("MSE")
 View(table1)
+
 # Lag 2 -------------------------------------------------------------------
 
 # Identifying the variables
@@ -282,6 +293,11 @@ plot(cv_model)
 ### Best model (best lambda) coefficients
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
+
+### Coefficients
+
+model_plot <- glmnet(x, y, alpha = 1)
+plot(model_plot, xvar = "lambda", label = T)
 
 ### Best lambda mean squared error (MSE)
 
@@ -344,6 +360,11 @@ plot(cv_model)
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 
+### Coefficients
+
+model_plot <- glmnet(x, y, alpha = 1)
+plot(model_plot, xvar = "lambda", label = T)
+
 ### Best lambda mean squared error (MSE)
 
 MSE_lasso_3 <- cv_model$cvm[cv_model$lambda == cv_model$lambda.min]
@@ -404,6 +425,12 @@ plot(cv_model)
 ### Best model (best lambda) coefficients
 
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
+coef(best_model)
+
+### Coefficients
+
+model_plot <- glmnet(x, y, alpha = 1)
+plot(model_plot, xvar = "lambda", label = T)
 
 ### Best lambda mean squared error (MSE)
 
@@ -523,7 +550,7 @@ panel_dataset_lags_2 <- panel_dataset %>%
 panel_dataset_lags_3 <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-
+    
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -920,7 +947,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset_lags <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-
+    
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -942,7 +969,7 @@ panel_dataset_lags <- panel_dataset %>%
 panel_dataset_lags_2 <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
-
+    
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -965,7 +992,7 @@ panel_dataset_lags_2 <- panel_dataset %>%
 panel_dataset_lags_3 <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-  
+    
     lag_GDP_growth_3 = dplyr::lag(GDP_growth,3),    
     GDP_growth_3 = 100*(GDP_cur - dplyr::lag(GDP_cur,3))/dplyr::lag(GDP_cur,3),
     lag_fx_volatility_3 = dplyr::lag(fx_volatility,3),
@@ -1355,7 +1382,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset <- panel_dataset %>% 
   group_by(country) %>% 
   mutate(
-
+    
     lag_GDP_growth_1 = dplyr::lag(GDP_growth,1),
     lag_fx_volatility_1 = dplyr::lag(fx_volatility,1),
     lag_nominal_rate_1 = dplyr::lag(nominal_rate,1),
@@ -1377,7 +1404,7 @@ panel_dataset <- panel_dataset %>%
 panel_dataset <- panel_dataset %>%
   group_by(country) %>% 
   mutate(
-  
+    
     lag_GDP_growth_2 = dplyr::lag(GDP_growth,2),    
     GDP_growth_2 = 100*(GDP_cur - dplyr::lag(GDP_cur,2))/dplyr::lag(GDP_cur,2),
     lag_fx_volatility_2 = dplyr::lag(fx_volatility,2),
@@ -1502,7 +1529,7 @@ table_se = as.data.frame(as.matrix(coef(se_model)))
 table <- cbind(table, "new column" = table_se$s0)
 colnames(table) <- c(sprintf("best lambda = %s", best_lambda), sprintf("best lambda + 1se = %s", se_lambda))
 table[nrow(table) + 1,] = c(MSE_lasso, MSE_lasso_se)
-rownames(table)[15] <- c("MSE")
+rownames(table)[68] <- c("MSE")
 View(table)
 
 
